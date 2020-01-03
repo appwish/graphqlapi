@@ -1,7 +1,9 @@
 package io.appwish.graphqlapi;
 
+import io.appwish.graphqlapi.testutil.DummyData;
 import io.appwish.graphqlapi.testutil.DummyGRPCServer;
 import io.appwish.graphqlapi.testutil.DummySuccessWishService;
+import io.appwish.grpc.Wish;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -17,6 +19,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -24,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @ExtendWith(VertxExtension.class)
 class GraphQLVerticleTest {
 
-  private static final int APP_PORT = 8000;
+  private static final int APP_PORT = 8787;
   private static final int DUMMY_WISH_SERVICE_PORT = 7777;
   private static final String GRAPHQL_PATH = "/graphql";
   private static final String GRAPHIQL_PATH = "/graphiql/";
@@ -112,10 +116,12 @@ class GraphQLVerticleTest {
 
         // then
         if (ar.succeeded()) {
-          final JsonObject response = ar.result().body();
           testContext.verify(() -> {
             final JsonArray allAppWish = ar.result().body().getJsonObject("data").getJsonArray("allAppWish");
-            assertEquals(3, allAppWish.size());
+            final List<String> allIds = allAppWish.stream().map(JsonObject::mapFrom).map(jsonObject -> jsonObject.getString("id")).collect(Collectors.toList());
+            assertEquals(DummyData.WISHES.stream()
+              .map(Wish::getId)
+              .collect(Collectors.toList()), allIds);
             testContext.completeNow();
           });
         } else {
@@ -128,10 +134,9 @@ class GraphQLVerticleTest {
   void graphql_query_should_return_selected_app_wish(final Vertx vertx, final VertxTestContext testContext) throws Throwable {
     // given
     final WebClient client = WebClient.create(vertx, new WebClientOptions().setDefaultPort(APP_PORT));
-    final String testId = "test-id-1";
     final JsonObject request = new JsonObject()
       .put("query", "query AppWish($id: ID) { appWish(id: $id) { id } }")
-      .put("variables", new JsonObject().put("id", testId));
+      .put("variables", new JsonObject().put("id", DummyData.WISH_2.getId()));
 
     // when
     client.post(GRAPHQL_PATH)
@@ -144,7 +149,36 @@ class GraphQLVerticleTest {
         if (ar.succeeded()) {
           testContext.verify(() -> {
             final JsonObject appWish = ar.result().body().getJsonObject("data").getJsonObject("appWish");
-            assertEquals(testId, appWish.getString("id"));
+            assertEquals(DummyData.WISH_2.getId(), appWish.getString("id"));
+            testContext.completeNow();
+          });
+        } else {
+          ar.cause().printStackTrace();
+          testContext.failNow(ar.cause());
+        }
+      });
+  }
+
+  @Test
+  void graphql_query_should_return_selected_wish_property(final Vertx vertx, final VertxTestContext testContext) throws Throwable {
+    // given
+    final WebClient client = WebClient.create(vertx, new WebClientOptions().setDefaultPort(APP_PORT));
+    final JsonObject request = new JsonObject()
+      .put("query", "query AppWish($id: ID) { appWish(id: $id) { description } }")
+      .put("variables", new JsonObject().put("id", DummyData.WISH_2.getId()));
+
+    // when
+    client.post(GRAPHQL_PATH)
+      .expect(ResponsePredicate.SC_OK)
+      .expect(ResponsePredicate.JSON)
+      .as(BodyCodec.jsonObject())
+      .sendJsonObject(request, ar -> {
+
+        // then
+        if (ar.succeeded()) {
+          testContext.verify(() -> {
+            final JsonObject appWish = ar.result().body().getJsonObject("data").getJsonObject("appWish");
+            assertEquals(DummyData.WISH_2.getDescription(), appWish.getString("description"));
             testContext.completeNow();
           });
         } else {

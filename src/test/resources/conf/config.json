@@ -1,6 +1,6 @@
 {
   "env": "dev",
-  "appPort": 8000,
+  "appPort": 8787,
   "wishServiceHost": "localhost",
   "wishServicePort": 7777,
   "schemaDirPath": "schema"
