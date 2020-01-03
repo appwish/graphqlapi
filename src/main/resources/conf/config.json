@@ -1,0 +1,7 @@
+{
+  "env": "dev",
+  "appPort": 8000,
+  "wishServiceAddress": "localhost",
+  "wishServicePort": 8001,
+  "schemaDirPath": "src/main/resources/schema"
+}

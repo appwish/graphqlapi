@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="io.appwish.graphqlapi.TestGraphQLVerticle" tests="2" skipped="0" failures="0" errors="0" timestamp="2020-01-02T20:29:08" hostname="C02W61UVHTDF" time="1.425">
+  <properties/>
+  <testcase name="graphql_endpoint_exposed(Vertx, VertxTestContext)" classname="io.appwish.graphqlapi.TestGraphQLVerticle" time="1.386"/>
+  <testcase name="verticle_deployed(Vertx, VertxTestContext)" classname="io.appwish.graphqlapi.TestGraphQLVerticle" time="0.038"/>
+  <system-out><![CDATA[response = {
+  "data" : {
+    "allAppWish" : [ {
+      "id" : "1"
+    }, {
+      "id" : "2"
+    }, {
+      "id" : "6"
+    }, {
+      "id" : "7"
+    }, {
+      "id" : "3"
+    }, {
+      "id" : "4"
+    }, {
+      "id" : "5"
+    }, {
+      "id" : "8"
+    }, {
+      "id" : "10"
+    }, {
+      "id" : "9"
+    } ]
+  }
+}
+]]></system-out>
+  <system-err><![CDATA[SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+Jan 02, 2020 9:29:08 PM io.vertx.config.impl.ConfigRetrieverImpl
+INFO: Config file path: /var/folders/p_/v_95ydtj1xl0ntk9zj6_ssfh0000gn/T/vertx-cache/file-cache-e1745d19-e5b0-4fd6-a542-c7ec812140bd/conf/config.json, format:json
+Jan 02, 2020 9:29:10 PM io.vertx.config.impl.ConfigRetrieverImpl
+INFO: Config file path: /var/folders/p_/v_95ydtj1xl0ntk9zj6_ssfh0000gn/T/vertx-cache/file-cache-147f1761-e725-4919-be3b-070c556bfe9f/conf/config.json, format:json
+]]></system-err>
+</testsuite>
