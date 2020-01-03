@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 
 public class SchemaDefinitionProvider {
 
+  private static final String SCHEMA_DIR_PATH = "schemaDirPath";
+
   private final Vertx vertx;
   private final JsonObject config;
 
@@ -20,7 +22,7 @@ public class SchemaDefinitionProvider {
   }
 
   public TypeDefinitionRegistry createSchemaDefinition() {
-    final String schemaDirPath = config.getString("schemaDirPath");
+    final String schemaDirPath = config.getString(SCHEMA_DIR_PATH);
     final List<String> schemaFilePaths = vertx.fileSystem().readDirBlocking(schemaDirPath);
     final TypeDefinitionRegistry registry = new TypeDefinitionRegistry();
     final SchemaParser schemaParser = new SchemaParser();

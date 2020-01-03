@@ -1,12 +1,15 @@
 package io.appwish.graphqlapi.grpc;
 
-import io.appwish.grpc.AppWishServiceGrpc;
+import io.appwish.grpc.WishServiceGrpc;
 import io.grpc.ManagedChannel;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.grpc.VertxChannelBuilder;
 
 public class ServiceStubs {
+
+  private static final String WISH_SERVICE_HOST = "wishServiceHost";
+  private static final String WISH_SERVICE_PORT = "wishServicePort";
 
   private final Vertx vertx;
   private final JsonObject config;
@@ -16,14 +19,14 @@ public class ServiceStubs {
     this.config = config;
   }
 
-  public AppWishServiceGrpc.AppWishServiceVertxStub wishServiceStub() {
-    final String wishServiceAddress = config.getString("wishServiceAddress");
-    final Integer wishServicePort = config.getInteger("wishServicePort");
+  public WishServiceGrpc.WishServiceVertxStub wishServiceStub() {
+    final String wishServiceHost = config.getString(WISH_SERVICE_HOST);
+    final Integer wishServicePort = config.getInteger(WISH_SERVICE_PORT);
     final ManagedChannel channel = VertxChannelBuilder
-      .forAddress(vertx, wishServiceAddress, wishServicePort)
+      .forAddress(vertx, wishServiceHost, wishServicePort)
       .usePlaintext(true)
       .build();
 
-    return AppWishServiceGrpc.newVertxStub(channel);
+    return WishServiceGrpc.newVertxStub(channel);
   }
 }

@@ -2,7 +2,6 @@ package io.appwish.graphqlapi;
 
 import graphql.GraphQL;
 import graphql.schema.GraphQLSchema;
-import graphql.schema.idl.RuntimeWiring;
 import graphql.schema.idl.SchemaGenerator;
 import graphql.schema.idl.TypeDefinitionRegistry;
 import io.appwish.graphqlapi.fetcher.WishFetcher;
@@ -23,6 +22,9 @@ import io.vertx.ext.web.handler.graphql.GraphiQLHandlerOptions;
 
 public class GraphQLVerticle extends AbstractVerticle {
 
+  private static final String ENV = "env";
+  private static final String DEV_ENV = "dev";
+  private static final String APP_PORT = "appPort";
   private static final String GRAPHQL_ROUTE = "/graphql";
   private static final String GRAPHIQL_ROUTE = "/graphiql/*";
 
@@ -32,7 +34,7 @@ public class GraphQLVerticle extends AbstractVerticle {
 
     retriever.getConfig(json -> {
       final JsonObject config = json.result();
-      final int appPort = config.getInteger("appPort");
+      final int appPort = config.getInteger(APP_PORT);
 
       // gRPC
       final ServiceStubs serviceStubs = new ServiceStubs(vertx, config);
@@ -41,8 +43,10 @@ public class GraphQLVerticle extends AbstractVerticle {
       final SchemaGenerator schemaGenerator = new SchemaGenerator();
       final SchemaDefinitionProvider schemaDefinitionProvider = new SchemaDefinitionProvider(vertx, config);
       final TypeDefinitionRegistry definitionRegistry = schemaDefinitionProvider.createSchemaDefinition();
-      final RuntimeWiring runtimeWiring = prepareWiring(serviceStubs);
-      final GraphQLSchema graphQLSchema = schemaGenerator.makeExecutableSchema(definitionRegistry, runtimeWiring);
+      final WishFetcher wishFetcher = new WishFetcher(serviceStubs.wishServiceStub());
+      final GraphQLTypes wishTypes = new WishTypes(wishFetcher);
+      final WiringProvider wiringProvider = new WiringProvider(wishTypes);
+      final GraphQLSchema graphQLSchema = schemaGenerator.makeExecutableSchema(definitionRegistry, wiringProvider.runtimeWiring());
       final GraphQL graphQL = GraphQL.newGraphQL(graphQLSchema).build();
       final GraphiQLHandlerOptions options = new GraphiQLHandlerOptions().setEnabled(true);
 
@@ -53,19 +57,11 @@ public class GraphQLVerticle extends AbstractVerticle {
     });
   }
 
-  private RuntimeWiring prepareWiring(final ServiceStubs serviceStubs) {
-    final WishFetcher wishFetcher = new WishFetcher(serviceStubs.wishServiceStub());
-    final GraphQLTypes wishTypes = new WishTypes(wishFetcher);
-    final WiringProvider wiringProvider = new WiringProvider(wishTypes);
-
-    return wiringProvider.runtimeWiring();
-  }
-
   private Router prepareRouter(final Vertx vertx, final GraphQL graphQL, final GraphiQLHandlerOptions options, final JsonObject config) {
     final Router router = Router.router(vertx);
-    final String env = config.getString("env");
+    final String environment = config.getString(ENV);
 
-    if (env.equals("dev")) {
+    if (environment.equals(DEV_ENV)) {
       router.route(GRAPHIQL_ROUTE).handler(GraphiQLHandler.create(options));
     }
 

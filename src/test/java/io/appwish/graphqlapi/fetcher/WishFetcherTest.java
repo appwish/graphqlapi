@@ -1,14 +1,14 @@
 package io.appwish.graphqlapi.fetcher;
 
 import graphql.schema.DataFetchingEnvironment;
-import io.appwish.graphqlapi.testutil.InProcessServer;
 import io.appwish.graphqlapi.testutil.DummyData;
-import io.appwish.graphqlapi.testutil.DummySuccessfulWishService;
-import io.appwish.graphqlapi.testutil.DummyUnsuccessfulWishService;
-import io.appwish.grpc.AppWishServiceGrpc;
+import io.appwish.graphqlapi.testutil.DummyFailureWishService;
+import io.appwish.graphqlapi.testutil.DummyGRPCServer;
+import io.appwish.graphqlapi.testutil.DummySuccessWishService;
+import io.appwish.grpc.WishServiceGrpc;
 import io.grpc.ManagedChannel;
-import io.grpc.inprocess.InProcessChannelBuilder;
 import io.vertx.core.Vertx;
+import io.vertx.grpc.VertxChannelBuilder;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import org.junit.jupiter.api.AfterEach;
@@ -26,46 +26,50 @@ import static org.mockito.Mockito.when;
 @ExtendWith(VertxExtension.class)
 class WishFetcherTest {
 
-  private static final String SUCCESS_TESTS = "successTests";
-  private static final String FAILURE_TESTS = "failureTests";
   private static final String ID = "id";
   private static final String NOT_EXISTING_ID = "sadsadsafmfkmkasd";
+  private static final String LOCALHOST = "localhost";
+  private static final int FAILURE_CHANNEL_PORT = 7779;
+  private static final int SUCCESS_CHANNEL_PORT = 7777;
 
-  private InProcessServer<DummySuccessfulWishService> dummySuccessfulWishServiceInProcessServer;
-  private InProcessServer<DummyUnsuccessfulWishService> dummyUnsuccessfulWishServiceInProcessServer;
-  private ManagedChannel successfulChannel;
-  private ManagedChannel unsuccessfulChannel;
+  private DummyGRPCServer<DummySuccessWishService> dummySuccessWishServiceDummyGRPCServer;
+  private DummyGRPCServer<DummyFailureWishService> dummyFailureWishServiceDummyGRPCServer;
+  private ManagedChannel successChannel;
+  private ManagedChannel failureChannel;
   private WishFetcher fetcher;
 
   @BeforeEach
-  void set_up() throws InstantiationException, IllegalAccessException, IOException {
-    dummySuccessfulWishServiceInProcessServer = new InProcessServer<>(DummySuccessfulWishService.class);
-    dummyUnsuccessfulWishServiceInProcessServer = new InProcessServer<>(DummyUnsuccessfulWishService.class);
-    dummySuccessfulWishServiceInProcessServer.start(SUCCESS_TESTS);
-    dummyUnsuccessfulWishServiceInProcessServer.start(FAILURE_TESTS);
-    successfulChannel = InProcessChannelBuilder
-      .forName(SUCCESS_TESTS)
-      .directExecutor()
+  void set_up(final Vertx vertx, final VertxTestContext testContext) throws InstantiationException, IllegalAccessException, IOException {
+    dummySuccessWishServiceDummyGRPCServer = new DummyGRPCServer<>(DummySuccessWishService.class, SUCCESS_CHANNEL_PORT);
+    dummyFailureWishServiceDummyGRPCServer = new DummyGRPCServer<>(DummyFailureWishService.class, FAILURE_CHANNEL_PORT);
+    dummySuccessWishServiceDummyGRPCServer.start();
+    dummyFailureWishServiceDummyGRPCServer.start();
+
+    successChannel = VertxChannelBuilder
+      .forAddress(vertx, LOCALHOST, SUCCESS_CHANNEL_PORT)
       .usePlaintext(true)
       .build();
-    unsuccessfulChannel = InProcessChannelBuilder
-      .forName(FAILURE_TESTS)
-      .directExecutor()
+
+    failureChannel = VertxChannelBuilder
+      .forAddress(vertx, LOCALHOST, FAILURE_CHANNEL_PORT)
       .usePlaintext(true)
       .build();
-    fetcher = new WishFetcher(AppWishServiceGrpc.newVertxStub(successfulChannel));
+
+    fetcher = new WishFetcher(WishServiceGrpc.newVertxStub(successChannel));
+
+    testContext.completeNow();
   }
 
   @AfterEach
   void tear_down() {
-    successfulChannel.shutdownNow();
-    unsuccessfulChannel.shutdownNow();
-    dummySuccessfulWishServiceInProcessServer.stop();
-    dummyUnsuccessfulWishServiceInProcessServer.stop();
+    successChannel.shutdownNow();
+    failureChannel.shutdownNow();
+    dummySuccessWishServiceDummyGRPCServer.stop();
+    dummyFailureWishServiceDummyGRPCServer.stop();
   }
 
   @Test
-  void should_return_all_app_wishes(final Vertx vertx, final VertxTestContext testContext) {
+  void should_return_all_wishes(final Vertx vertx, final VertxTestContext testContext) {
     // given
     final DataFetchingEnvironment dataFetchingEnvironment = mock(DataFetchingEnvironment.class);
 
@@ -73,31 +77,31 @@ class WishFetcherTest {
     fetcher.findAll(dataFetchingEnvironment)
 
       // then
-      .whenComplete((appWishes, throwable) -> testContext.verify(() -> {
-        assertEquals(DummyData.APP_WISH_LIST.getAppWishList(), appWishes);
+      .whenComplete((wishes, throwable) -> testContext.verify(() -> {
+        assertEquals(DummyData.WISHES, wishes);
         testContext.completeNow();
       }));
   }
 
   @Test
-  void should_return_found_app_wish(final Vertx vertx, final VertxTestContext testContext) {
+  void should_return_found_wish(final Vertx vertx, final VertxTestContext testContext) {
     // given
     final DataFetchingEnvironment mock = mock(DataFetchingEnvironment.class);
-    when(mock.getArgument(ID)).thenReturn(DummyData.APP_WISH_1.getId());
+    when(mock.getArgument(ID)).thenReturn(DummyData.WISH_1.getId());
 
     // when
     fetcher.findOne(mock)
 
       // then
-      .whenComplete((appWish, throwable) -> testContext.verify(() -> {
-        assertTrue(appWish.isPresent());
-        assertEquals(DummyData.APP_WISH_1, appWish.get());
+      .whenComplete((wish, throwable) -> testContext.verify(() -> {
+        assertTrue(wish.isPresent());
+        assertEquals(DummyData.WISH_1, wish.get());
         testContext.completeNow();
       }));
   }
 
   @Test
-  void should_return_empty_when_app_wish_not_found(final Vertx vertx, final VertxTestContext testContext) {
+  void should_return_empty_when_wish_not_found(final Vertx vertx, final VertxTestContext testContext) {
     // given
     final DataFetchingEnvironment mock = mock(DataFetchingEnvironment.class);
     when(mock.getArgument(ID)).thenReturn(NOT_EXISTING_ID);
@@ -106,8 +110,8 @@ class WishFetcherTest {
     fetcher.findOne(mock)
 
       // then
-      .whenComplete((appWishes, throwable) -> testContext.verify(() -> {
-        assertTrue(appWishes.isEmpty());
+      .whenComplete((wish, throwable) -> testContext.verify(() -> {
+        assertTrue(wish.isEmpty());
         testContext.completeNow();
       }));
   }
@@ -116,8 +120,10 @@ class WishFetcherTest {
   void should_pass_exception_on_find_one_error(final Vertx vertx, final VertxTestContext testContext) {
     // given
     final DataFetchingEnvironment mock = mock(DataFetchingEnvironment.class);
-    fetcher = new WishFetcher(AppWishServiceGrpc.newVertxStub(unsuccessfulChannel));
-    when(mock.getArgument(ID)).thenReturn(DummyData.APP_WISH_1.getId());
+    when(mock.getArgument(ID)).thenReturn(DummyData.WISH_1.getId());
+
+    // using failure path
+    fetcher = new WishFetcher(WishServiceGrpc.newVertxStub(failureChannel));
 
     // when
     fetcher.findOne(mock)
@@ -133,7 +139,9 @@ class WishFetcherTest {
   void should_pass_exception_on_find_all_error(final Vertx vertx, final VertxTestContext testContext) {
     // given
     final DataFetchingEnvironment mock = mock(DataFetchingEnvironment.class);
-    fetcher = new WishFetcher(AppWishServiceGrpc.newVertxStub(unsuccessfulChannel));
+
+    // using failure path
+    fetcher = new WishFetcher(WishServiceGrpc.newVertxStub(failureChannel));
 
     // when
     fetcher.findAll(mock)

@@ -22,9 +22,7 @@ public class WiringProvider {
 
   public RuntimeWiring runtimeWiring() {
     final RuntimeWiring.Builder wiringBuilder = newRuntimeWiring();
-
     graphQLTypes.forEach(graphQLType -> wiringBuilder.type(graphQLType.getTypeName(), graphQLType.getTypeBuilderFunction()));
-
     return wiringBuilder.build();
   }
 }

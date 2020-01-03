@@ -1,6 +1,0 @@
-type AppWish {
- id: ID!
- title: String!
- description: String!
- coverImageUrl: String
-}
