@@ -8,8 +8,8 @@ import java.util.List;
 public class WishTypes implements GraphQLTypes {
 
   private static final String QUERY = "Query";
-  private static final String APP_WISH = "appWish";
-  private static final String ALL_APP_WISH = "allAppWish";
+  private static final String WISH = "wish";
+  private static final String ALL_WISH = "allWish";
 
   private final WishFetcher wishFetcher;
 
@@ -19,12 +19,12 @@ public class WishTypes implements GraphQLTypes {
 
   @Override
   public List<GraphQLType> get() {
-    final GraphQLType appWish = new GraphQLType(QUERY,
-      builder -> builder.dataFetcher(APP_WISH, wishFetcher::findOne));
+    final GraphQLType wish = new GraphQLType(QUERY,
+      builder -> builder.dataFetcher(WISH, wishFetcher::findOne));
 
-    final GraphQLType allAppWish = new GraphQLType(QUERY,
-      builder -> builder.dataFetcher(ALL_APP_WISH, wishFetcher::findAll));
+    final GraphQLType allWish = new GraphQLType(QUERY,
+      builder -> builder.dataFetcher(ALL_WISH, wishFetcher::findAll));
 
-    return List.of(appWish, allAppWish);
+    return List.of(wish, allWish);
   }
 }

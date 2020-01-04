@@ -129,7 +129,7 @@ class WishFetcherTest {
     fetcher.findOne(mock)
 
       // then
-      .whenComplete((appWishes, throwable) -> testContext.verify(() -> {
+      .whenComplete((wishes, throwable) -> testContext.verify(() -> {
         assertTrue(throwable instanceof RuntimeException);
         testContext.completeNow();
       }));
@@ -147,7 +147,7 @@ class WishFetcherTest {
     fetcher.findAll(mock)
 
       // then
-      .whenComplete((appWishes, throwable) -> testContext.verify(() -> {
+      .whenComplete((wishes, throwable) -> testContext.verify(() -> {
         assertTrue(throwable instanceof RuntimeException);
         testContext.completeNow();
       }));
