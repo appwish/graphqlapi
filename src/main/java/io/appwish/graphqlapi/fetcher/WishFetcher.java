@@ -13,6 +13,8 @@ import java.util.concurrent.CompletionStage;
 
 public class WishFetcher {
 
+  private static final String MODEL_ID = "id";
+
   private final WishServiceGrpc.WishServiceVertxStub wishServiceStub;
 
   public WishFetcher(final WishServiceGrpc.WishServiceVertxStub wishServiceStub) {
@@ -35,7 +37,7 @@ public class WishFetcher {
 
   public CompletionStage<Optional<Wish>> findOne(final DataFetchingEnvironment dataFetchingEnvironment) {
     final CompletableFuture<Optional<Wish>> completableFuture = new CompletableFuture<>();
-    final WishQuery query = WishQuery.newBuilder().setId(dataFetchingEnvironment.getArgument("id")).build();
+    final WishQuery query = WishQuery.newBuilder().setId(dataFetchingEnvironment.getArgument(MODEL_ID)).build();
 
     wishServiceStub.getWish(query, event -> {
       if (event.succeeded()) {
