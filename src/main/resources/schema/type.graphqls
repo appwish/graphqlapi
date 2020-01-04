@@ -1,4 +1,4 @@
-type AppWish {
+type Wish {
  id: ID!
  title: String!
  description: String!

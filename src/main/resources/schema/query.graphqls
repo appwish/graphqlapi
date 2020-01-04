@@ -1,4 +1,4 @@
 type Query {
-  appWish(id: ID): AppWish
-  allAppWish: [AppWish!]!
+  wish(id: ID): Wish
+  allWish: [Wish!]!
 }
