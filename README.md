@@ -9,7 +9,7 @@
 ## Building
 
 To launch your tests:
-``bash
+```bash
 ./gradlew clean test
 ```
 
