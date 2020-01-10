@@ -17,3 +17,7 @@ To run your application:
 ```bash
 ./gradlew clean run
 ```
+
+## Qovery
+
+To [install Qovery CLI](https://docs.qovery.com/quickstart/sign-up)
