@@ -187,3 +187,6 @@ nbdist/
 
 ### remove idea dir
 .idea
+
+.qovery
+local_configuration.json
