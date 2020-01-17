@@ -1,4 +1,36 @@
 type Query {
+  "Get a wish by ID"
   wish(id: ID): Wish
-  allWish: [Wish!]!
+
+  "Gets all Wishes"
+  allWishes: [Wish!]!
+
+  "Get all Wishes for Whiser"
+  myWishlist(userID: ID): [Wish]
+
+  "Get all Comments for a Wish"
+  allComments(wishID: ID): [Comment]
+
+  "Get all Replies for a Comment"
+  allReplies(commentID: ID):[Reply]
+
+  "Get a Dev's Profile"
+  profile(id: ID): Dev
+
+  "Get all Dev's Profile"
+  allProfiles: [Dev]
+
+  "Get a Team by ID"
+  team(id: ID): Team
+
+  "Get all Teams"
+  allTeams: [Team]
+
+  "Get a Team Member Details"
+  teamMember(id: ID, teamID : ID): TeamMember
+
+  "Gets all Team Members for"
+  allTeamMembers(teamID:ID): [TeamMember]
+
 }
+
