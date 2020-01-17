@@ -74,7 +74,6 @@ public class WishFetcher {
       .setTitle(title)
       .setContent(content)
       .setCoverImageUrl(coverImageUrl)
-      .setAuthorId(123)
       .build();
 
     eventBus.<WishProto>request(Address.CREATE_WISH.get(), wishInput, event -> {

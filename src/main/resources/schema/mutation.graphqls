@@ -1,0 +1,5 @@
+type Mutation {
+  createWish(input: WishInput!): Wish!
+  deleteWish(id: ID!): Wish!: Boolean!
+  updateWish(id: ID!, input: WishInput!): Wish
+}

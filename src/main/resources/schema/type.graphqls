@@ -1,6 +1,8 @@
 type Wish {
  id: ID!
+ authorId: ID!
  title: String!
- description: String!
+ content: String!
+ url: String!
  coverImageUrl: String
 }

@@ -5,30 +5,55 @@ option java_package = "io.appwish.grpc";
 option java_outer_classname = "WishGRPC";
 
 service WishService {
-  rpc GetAllWish (AllWishQuery) returns (AllWishReply) {
+  rpc GetAllWish (AllWishQueryProto) returns (AllWishReplyProto) {
   }
-  rpc GetWish (WishQuery) returns (WishReply) {
+  rpc GetWish (WishQueryProto) returns (WishReplyProto) {
+  }
+  rpc CreateWish (WishInputProto) returns (WishReplyProto) {
+  }
+  rpc UpdateWish (UpdateWishInputProto) returns (WishReplyProto) {
+  }
+  rpc DeleteWish (WishQueryProto) returns (WishDeleteReplyProto) {
   }
 }
 
-message AllWishQuery {
+message AllWishQueryProto {
 }
 
-message WishQuery {
-  string id = 1;
+message WishQueryProto {
+  int64 id = 1;
 }
 
-message AllWishReply {
-  repeated Wish wishes = 1;
+message AllWishReplyProto {
+  repeated WishProto wishes = 1;
 }
 
-message WishReply {
-  Wish wish = 1;
+message WishReplyProto {
+  WishProto wish = 1;
 }
 
-message Wish {
-  string id = 1;
-  string title = 2;
-  string description = 3;
-  string cover_image_url = 4;
+message WishDeleteReplyProto {
+  bool deleted = 1;
+}
+
+message WishProto {
+  int64 id = 1;
+  int64 authorId = 2;
+  string title = 3;
+  string content = 4;
+  string url = 5;
+  string cover_image_url = 6;
+}
+
+message WishInputProto {
+  string title = 1;
+  string content = 2;
+  string coverImageUrl = 3;
+}
+
+message UpdateWishInputProto {
+  string title = 1;
+  string content = 2;
+  string coverImageUrl = 3;
+  int64 id = 4;
 }
