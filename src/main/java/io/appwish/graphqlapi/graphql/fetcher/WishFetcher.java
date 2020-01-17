@@ -8,10 +8,10 @@ import io.appwish.grpc.UpdateWishInputProto;
 import io.appwish.grpc.WishInputProto;
 import io.appwish.grpc.WishProto;
 import io.appwish.grpc.WishQueryProto;
+import io.appwish.grpc.WishReplyProto;
 import io.vertx.core.eventbus.EventBus;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -47,14 +47,17 @@ public class WishFetcher {
     return completableFuture;
   }
 
-  public CompletionStage<Optional<WishProto>> wish(
+  public CompletionStage<WishProto> wish(
     final DataFetchingEnvironment dataFetchingEnvironment) {
-    final CompletableFuture<Optional<WishProto>> completableFuture = new CompletableFuture<>();
-    final WishQueryProto query = WishQueryProto.newBuilder().setId(Long.valueOf(dataFetchingEnvironment.getArgument(ID))).build();
+    final CompletableFuture<WishProto> completableFuture = new CompletableFuture<>();
+    final WishQueryProto query = WishQueryProto.newBuilder()
+      .setId(Long.valueOf(dataFetchingEnvironment.getArgument(ID))).build();
 
-    eventBus.<Optional<WishProto>>request(Address.WISH.get(), query, event -> {
-      if (event.succeeded()) {
-        completableFuture.complete(event.result().body());
+    eventBus.<WishReplyProto>request(Address.WISH.get(), query, event -> {
+      if (event.succeeded() && event.result().body().hasWish()) {
+        completableFuture.complete(event.result().body().getWish());
+      } else if (event.succeeded()) {
+        completableFuture.complete(null);
       } else {
         completableFuture.completeExceptionally(event.cause());
       }
@@ -87,9 +90,9 @@ public class WishFetcher {
     return completableFuture;
   }
 
-  public CompletionStage<Optional<WishProto>> updateWish(
+  public CompletionStage<WishProto> updateWish(
     final DataFetchingEnvironment dataFetchingEnvironment) {
-    final CompletableFuture<Optional<WishProto>> completableFuture = new CompletableFuture<>();
+    final CompletableFuture<WishProto> completableFuture = new CompletableFuture<>();
     final Map<String, String> input = dataFetchingEnvironment.getArgument(INPUT);
     final String title = input.get(TITLE);
     final String content = input.get(CONTENT);
@@ -98,12 +101,15 @@ public class WishFetcher {
       .setTitle(title)
       .setContent(content)
       .setCoverImageUrl(coverImageUrl)
+      .setId(Long.valueOf(dataFetchingEnvironment.getArgument(ID)))
       .build();
 
-    eventBus.<Optional<WishProto>>request(Address.UPDATE_WISH.get(), wishInput,
+    eventBus.<WishReplyProto>request(Address.UPDATE_WISH.get(), wishInput,
       event -> {
-        if (event.succeeded()) {
-          completableFuture.complete(event.result().body());
+        if (event.succeeded() && event.result().body().hasWish()) {
+          completableFuture.complete(event.result().body().getWish());
+        } else if (event.succeeded()) {
+          completableFuture.complete(null);
         } else {
           completableFuture.completeExceptionally(event.cause());
         }
@@ -117,7 +123,7 @@ public class WishFetcher {
     final CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
     final WishQueryProto query = WishQueryProto.newBuilder().setId(Long.valueOf(dataFetchingEnvironment.getArgument(ID))).build();
 
-    eventBus.<Boolean>request(Address.UPDATE_WISH.get(), query,
+    eventBus.<Boolean>request(Address.DELETE_WISH.get(), query,
       event -> {
         if (event.succeeded()) {
           completableFuture.complete(event.result().body());

@@ -23,7 +23,7 @@ application {
 
 sourceCompatibility = '11'
 
-def mainVerticleName = 'io.appwish.graphqlapi.GraphQLVerticle'
+def mainVerticleName = 'io.appwish.graphqlapi.MainVerticle'
 def watchForChange = 'src/**/*'
 def doOnChange = './gradlew classes'
 

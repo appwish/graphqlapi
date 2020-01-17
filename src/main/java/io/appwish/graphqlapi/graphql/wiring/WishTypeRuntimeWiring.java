@@ -15,6 +15,8 @@ public class WishTypeRuntimeWiring implements TypeRuntimeWiringCollection {
   private static final String WISH = "wish";
   private static final String ALL_WISH = "allWish";
   private static final String CREATE_WISH = "createWish";
+  private static final String DELETE_WISH = "deleteWish";
+  private static final String UPDATE_WISH = "updateWish";
 
   private final WishFetcher wishFetcher;
 
@@ -29,6 +31,8 @@ public class WishTypeRuntimeWiring implements TypeRuntimeWiringCollection {
     final TypeRuntimeWiring wish = TypeRuntimeWiring.newTypeWiring(QUERY, builder -> builder.dataFetcher(WISH, wishFetcher::wish));
     final TypeRuntimeWiring allWish = TypeRuntimeWiring.newTypeWiring(QUERY, builder -> builder.dataFetcher(ALL_WISH, wishFetcher::allWish));
     final TypeRuntimeWiring createWish = TypeRuntimeWiring.newTypeWiring(MUTATION, builder -> builder.dataFetcher(CREATE_WISH, wishFetcher::createWish));
-    return List.of(wish, allWish, createWish);
+    final TypeRuntimeWiring deleteWish = TypeRuntimeWiring.newTypeWiring(MUTATION, builder -> builder.dataFetcher(DELETE_WISH, wishFetcher::deleteWish));
+    final TypeRuntimeWiring updateWish = TypeRuntimeWiring.newTypeWiring(MUTATION, builder -> builder.dataFetcher(UPDATE_WISH, wishFetcher::updateWish));
+    return List.of(wish, allWish, createWish, deleteWish, updateWish);
   }
 }

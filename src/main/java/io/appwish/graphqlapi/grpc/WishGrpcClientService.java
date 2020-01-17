@@ -1,13 +1,14 @@
 package io.appwish.graphqlapi.grpc;
 
 import io.appwish.graphqlapi.eventbus.Address;
+import io.appwish.graphqlapi.eventbus.Codec;
 import io.appwish.grpc.AllWishQueryProto;
 import io.appwish.grpc.UpdateWishInputProto;
 import io.appwish.grpc.WishInputProto;
 import io.appwish.grpc.WishQueryProto;
 import io.appwish.grpc.WishServiceGrpc.WishServiceVertxStub;
+import io.vertx.core.eventbus.DeliveryOptions;
 import io.vertx.core.eventbus.EventBus;
-import java.util.Optional;
 
 /**
  * Registers methods of wishservice gRPC client stub on the event bus.
@@ -34,10 +35,8 @@ public class WishGrpcClientService extends AbstractGrpcClientService {
 
     eventBus.<WishQueryProto>consumer(Address.WISH.get(), event -> {
       wishService.getWish(event.body(), grpc -> {
-        if (grpc.succeeded() && grpc.result().hasWish()) {
-          event.reply(Optional.of(grpc.result()));
-        } else if (grpc.succeeded()) {
-          event.reply(Optional.empty());
+        if (grpc.succeeded()) {
+          event.reply(grpc.result());
         } else {
           event.fail(1, "Could not fetch data from wish service");
         }
@@ -46,8 +45,8 @@ public class WishGrpcClientService extends AbstractGrpcClientService {
 
     eventBus.<WishInputProto>consumer(Address.CREATE_WISH.get(), event -> {
       wishService.createWish(event.body(), grpc -> {
-        if (grpc.succeeded() && grpc.result().hasWish()) {
-          event.reply(Optional.of(grpc.result()));
+        if (grpc.succeeded()) {
+          event.reply(grpc.result().getWish());
         } else {
           event.fail(1, "Could not fetch data from wish service");
         }
@@ -66,10 +65,8 @@ public class WishGrpcClientService extends AbstractGrpcClientService {
 
     eventBus.<UpdateWishInputProto>consumer(Address.UPDATE_WISH.get(), event -> {
       wishService.updateWish(event.body(), grpc -> {
-        if (grpc.succeeded() && grpc.result().hasWish()) {
-          event.reply(Optional.of(grpc.result()));
-        } else if (grpc.succeeded()) {
-          event.reply(Optional.empty());
+        if (grpc.succeeded()) {
+          event.reply(grpc.result(), new DeliveryOptions().setCodecName(Codec.WISH_REPLY.getCodecName()));
         } else {
           event.fail(1, "Could not fetch data from wish service");
         }
