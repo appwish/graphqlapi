@@ -15,7 +15,6 @@ import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -26,12 +25,6 @@ class GrpcClientVerticleTest {
   private static final String WISH_SERVICE_HOST = "localhost";
 
   private TestGrpcServer server;
-  private GrpcClientVerticle verticle;
-
-  @AfterEach
-  void sec(final Vertx vertx, final VertxTestContext testContext) {
-    vertx.undeploy(verticle.deploymentID(), testContext.succeeding(event -> testContext.completeNow()));
-  }
 
   @Test
   void should_deploy_verticle(final Vertx vertx, final VertxTestContext testContext) {
@@ -40,7 +33,7 @@ class GrpcClientVerticleTest {
       .put("wishServicePort", WISH_SERVICE_PORT)
       .put("wishServiceHost", WISH_SERVICE_HOST);
     final GrpcServiceStubsProvider stubsProvider = new GrpcServiceStubsProvider(vertx, config);
-    verticle = new GrpcClientVerticle(stubsProvider);
+    final GrpcClientVerticle verticle = new GrpcClientVerticle(stubsProvider);
 
     // when
     vertx.deployVerticle(verticle,
@@ -57,7 +50,7 @@ class GrpcClientVerticleTest {
       .put("wishServicePort", WISH_SERVICE_PORT)
       .put("wishServiceHost", WISH_SERVICE_HOST);
     final GrpcServiceStubsProvider stubsProvider = new GrpcServiceStubsProvider(vertx, config);
-    verticle = new GrpcClientVerticle(stubsProvider);
+    final GrpcClientVerticle verticle = new GrpcClientVerticle(stubsProvider);
     final EventBusConfigurer eventBusConfigurer = new EventBusConfigurer(vertx.eventBus());
     final AllWishQueryProto query = AllWishQueryProto.newBuilder().build();
     eventBusConfigurer.registerCodecs();

@@ -13,7 +13,6 @@ import io.vertx.ext.web.client.WebClientOptions;
 import io.vertx.ext.web.codec.BodyCodec;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -28,13 +27,6 @@ class GraphqlServerVerticleTest {
   private static final String SCHEMA_DIR_PATH_ENV = "schemaDirPath";
   private static final String ENV_ENV = "env";
 
-  private GraphqlServerVerticle verticle;
-
-  @AfterEach
-  void sec(final Vertx vertx, final VertxTestContext testContext) {
-    vertx.undeploy(verticle.deploymentID(), testContext.succeeding(event -> testContext.completeNow()));
-  }
-
   @Test
   void should_deploy_verticle(final Vertx vertx, final VertxTestContext testContext) {
     // given
@@ -42,7 +34,7 @@ class GraphqlServerVerticleTest {
       .put(APP_PORT_ENV, APP_PORT)
       .put(SCHEMA_DIR_PATH_ENV, SCHEMA_DIR)
       .put(ENV_ENV, PROD);
-    verticle = new GraphqlServerVerticle(config);
+    final GraphqlServerVerticle verticle = new GraphqlServerVerticle(config);
 
     // when
     vertx.deployVerticle(verticle,
@@ -61,7 +53,7 @@ class GraphqlServerVerticleTest {
       .put(APP_PORT_ENV, APP_PORT)
       .put(SCHEMA_DIR_PATH_ENV, SCHEMA_DIR)
       .put(ENV_ENV, PROD);
-    verticle = new GraphqlServerVerticle(config);
+    final GraphqlServerVerticle verticle = new GraphqlServerVerticle(config);
 
     vertx.deployVerticle(verticle, event -> {
 
@@ -90,7 +82,7 @@ class GraphqlServerVerticleTest {
       .put(APP_PORT_ENV, APP_PORT)
       .put(SCHEMA_DIR_PATH_ENV, SCHEMA_DIR)
       .put(ENV_ENV, DEV);
-    verticle = new GraphqlServerVerticle(config);
+    final GraphqlServerVerticle verticle = new GraphqlServerVerticle(config);
 
     vertx.deployVerticle(verticle, event -> {
 
@@ -118,7 +110,7 @@ class GraphqlServerVerticleTest {
       .put(APP_PORT_ENV, APP_PORT)
       .put(SCHEMA_DIR_PATH_ENV, SCHEMA_DIR)
       .put(ENV_ENV, PROD);
-    verticle = new GraphqlServerVerticle(config);
+    final GraphqlServerVerticle verticle = new GraphqlServerVerticle(config);
 
     vertx.deployVerticle(verticle, event -> {
 
