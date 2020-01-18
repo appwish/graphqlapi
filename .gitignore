@@ -1,5 +1,8 @@
 ### Vert.x ###
 .vertx/
+.idea
+build
+out
 
 ### Eclipse ###
 
