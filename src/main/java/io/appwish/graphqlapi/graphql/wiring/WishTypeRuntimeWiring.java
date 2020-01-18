@@ -6,7 +6,7 @@ import java.util.List;
 
 /**
  * Type runtime wiring is responsible for wiring GraphQL types with runtime. You need to specify how
- * to serve given GraphQL type, for example - how to fetch required data
+ * to serve given GraphQL query, for example - how to fetch required data.
  */
 public class WishTypeRuntimeWiring implements TypeRuntimeWiringCollection {
 

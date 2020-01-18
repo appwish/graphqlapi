@@ -7,7 +7,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.grpc.VertxChannelBuilder;
 
 /**
- * Convenience tool for creating gRPC service stubs
+ * Convenience tool for creating gRPC service stubs.
  */
 public class GrpcServiceStubsProvider {
 
@@ -23,9 +23,9 @@ public class GrpcServiceStubsProvider {
   }
 
   /**
-   * Wishservice stub can be used to fetch data from wishservice
-   * */
-  WishServiceGrpc.WishServiceVertxStub wishServiceStub() {
+   * Wish service stub can be used to fetch data from wish service
+   */
+  public WishServiceGrpc.WishServiceVertxStub wishServiceStub() {
     final String wishServiceHost = config.getString(WISH_SERVICE_HOST);
     final Integer wishServicePort = config.getInteger(WISH_SERVICE_PORT);
     final ManagedChannel channel = VertxChannelBuilder

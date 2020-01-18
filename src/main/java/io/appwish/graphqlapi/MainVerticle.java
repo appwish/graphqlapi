@@ -2,7 +2,6 @@ package io.appwish.graphqlapi;
 
 import io.appwish.graphqlapi.eventbus.EventBusConfigurer;
 import io.appwish.graphqlapi.grpc.GrpcServiceStubsProvider;
-import io.appwish.graphqlapi.grpc.WishGrpcClientService;
 import io.appwish.graphqlapi.verticle.GraphqlServerVerticle;
 import io.appwish.graphqlapi.verticle.GrpcClientVerticle;
 import io.vertx.config.ConfigRetriever;
@@ -23,13 +22,12 @@ public class MainVerticle extends AbstractVerticle {
     final ConfigRetriever configRetriever = ConfigRetriever.create(vertx);
     configRetriever.getConfig(event -> {
       final GrpcServiceStubsProvider grpcServiceStubsProvider = new GrpcServiceStubsProvider(vertx, event.result());
-      final WishGrpcClientService wishGrpcClientService = new WishGrpcClientService(vertx.eventBus(), grpcServiceStubsProvider);
       final EventBusConfigurer eventBusConfigurer = new EventBusConfigurer(vertx.eventBus());
 
       eventBusConfigurer.registerCodecs();
 
       CompositeFuture.all(
-        deployGrpcVerticle(wishGrpcClientService),
+        deployGrpcVerticle(grpcServiceStubsProvider),
         deployGraphqlVerticle(event.result())
       ).setHandler(deploy -> {
         if (deploy.succeeded()) {
@@ -55,10 +53,10 @@ public class MainVerticle extends AbstractVerticle {
     return promise.future();
   }
 
-  private Future<Void> deployGrpcVerticle(final WishGrpcClientService service) {
+  private Future<Void> deployGrpcVerticle(final GrpcServiceStubsProvider stubsProvider) {
     final Promise<Void> promise = Promise.promise();
 
-    vertx.deployVerticle(new GrpcClientVerticle(service), new DeploymentOptions(), res -> {
+    vertx.deployVerticle(new GrpcClientVerticle(stubsProvider), new DeploymentOptions(), res -> {
       if (res.failed()) {
         promise.fail(res.cause());
       } else {

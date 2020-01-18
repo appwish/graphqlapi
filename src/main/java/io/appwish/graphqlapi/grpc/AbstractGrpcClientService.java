@@ -1,22 +1,23 @@
 package io.appwish.graphqlapi.grpc;
 
+import io.grpc.stub.AbstractStub;
 import io.vertx.core.eventbus.EventBus;
 
 /**
- * Template for exposing data received by gRPC service stubs on the event bus.
+ * Subclasses should expose functionality of gRPC client stubs on the event bus.
  */
-public abstract class AbstractGrpcClientService {
+abstract class AbstractGrpcClientService<T extends AbstractStub> {
 
-  protected final EventBus eventBus;
-  protected final GrpcServiceStubsProvider serviceStubsProvider;
+  final EventBus eventBus;
+  final T stub;
 
-  public AbstractGrpcClientService(final EventBus eventBus, final GrpcServiceStubsProvider grpcServiceStubsProvider) {
+  AbstractGrpcClientService(final EventBus eventBus, final T stub) {
     this.eventBus = eventBus;
-    this.serviceStubsProvider = grpcServiceStubsProvider;
+    this.stub = stub;
   }
 
   /**
-   * Should expose the functionality of one of the service stubs on the event bus.
+   * Should expose the functionality of one of stubs on the event bus.
    */
-  abstract void registerServiceStub();
+  abstract void register();
 }

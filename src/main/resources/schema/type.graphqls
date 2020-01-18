@@ -6,3 +6,8 @@ type Wish {
  url: String!
  coverImageUrl: String
 }
+
+type WishUpdate {
+  success: Boolean!
+  wish: Wish
+}

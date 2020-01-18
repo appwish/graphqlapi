@@ -3,6 +3,7 @@ package io.appwish.graphqlapi.eventbus;
 import io.appwish.grpc.AllWishQueryProto;
 import io.appwish.grpc.AllWishReplyProto;
 import io.appwish.grpc.UpdateWishInputProto;
+import io.appwish.grpc.WishDeleteReplyProto;
 import io.appwish.grpc.WishInputProto;
 import io.appwish.grpc.WishProto;
 import io.appwish.grpc.WishQueryProto;
@@ -23,6 +24,7 @@ public enum Codec {
   WISH(new LocalReferenceCodec<>(WishProto.class)),
   ALL_WISH_REPLY(new LocalReferenceCodec<>(AllWishReplyProto.class)),
   WISH_REPLY(new LocalReferenceCodec<>(WishReplyProto.class)),
+  WISH_DELETE_REPLY(new LocalReferenceCodec<>(WishDeleteReplyProto.class)),
   ALL_WISH_QUERY(new LocalReferenceCodec<>(AllWishQueryProto.class)),
   WISH_QUERY(new LocalReferenceCodec<>(WishQueryProto.class)),
   WISH_INPUT(new LocalReferenceCodec<>(WishInputProto.class));
