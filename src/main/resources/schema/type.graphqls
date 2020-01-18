@@ -1,103 +1,37 @@
-type Vote{
-  id: ID!
-  targetID: ID!
-  voters: [User]
-  voteFor: Int
-  voteAgainst: Int
-}
 
-type Comment{
-  id: ID!
-  userID:ID!
-  message: String
-  votes: [Vote]
-  replies: [Reply]
-  createdAt: String
-  updatedAt: String
-}
-
-type Reply {
-  id:ID!
-  userID:ID!
-  message: String
-  votes: [Vote]
-  comments: [Comment]
-  createdAt: String
-  updatedAt: String
+input WishInput{
+  author: ID!
+  title: String!
+  description: String!
+  tags: String!
+  coverImageUrl: String
 }
 
 type Wish {
   id: ID!
-  author: User
+  author: Wisher!
   title: String!
   description: String!
-  tags: String
+  tags: String!
   coverImageUrl: String
   votes: [Vote]
   comments: [Comment]
   createdAt: String
   updatedAt: String
-}
-
-input WishInput{
-  author: ID
-  title: String!
-  description: String!
-  tags: String
-  coverImageUrl: String
-  votes: [ID]
-  comments: [ID]
 }
 
 
 interface User {
   id: ID!
-  userName: String
-  password: String
+  userName: String!
   userProfileImage: String
   createdAt: String
   updatedAt: String
-}
-
-enum DEV_TYPE{
-  FRONTEND
-  BACKEND
-  FULLSTACK
-}
-
-type Dev implements User{
-  id: ID!
-  userName: String
-  userEmail: String
-  password: String
-  userProfileImage: String
-  type: DEV_TYPE
-  tech: [String] #Languages,Frameworks, Tools, IDE's and anything you work with
-  stars: Int
-  xpLevel: Int
-  githubURL: String
-  twitterURL: String
-  createdAt: String
-  updatedAt: String
-}
-
-input DevInput {
-  userName: String
-  userEmail: String
-  password: String
-  userProfileImage: String
-  type: DEV_TYPE
-  tech: [String] #Languages,Frameworks, Tools, IDE's and anything you work with
-  stars: Int
-  xpLevel: Int
-  githubURL: String
-  twitterURL: String
 }
 
 type Wisher implements User{
   id: ID!
-  userName: String
-  password: String
+  userName: String!
   userProfileImage: String
   wishList: [Wish]
   feedTags: [String]
@@ -105,37 +39,21 @@ type Wisher implements User{
   updatedAt: String
 }
 
-type TeamMember{
-  profile: Dev
-  role: [String]
-  joinedAt: String
-  leftAt: String
-}
-
-input TeamMemberInput{
-  profile: DevInput
-  role: [String]
-  joinedAt: String
-  leftAt: String
-}
-
-type Team {
+type Vote{
   id: ID!
-  name: String
-  description: String
-  creators: [TeamMember]
-  members: [TeamMember]
-  tech: [String] #Languages,Frameworks, Tools, IDE's and anything you work with
-  invitationCode: String # Didn't want to expose the Team ID as the invitationCode.
+  targetID: ID!
+  voter: User!
+  voteUp: Boolean!
+}
+
+type Comment{
+  id: ID!
+  targetID: ID!
+  userID:ID!
+  message: String
+  votes: [Vote]
+  comments: [Comment]
   createdAt: String
   updatedAt: String
 }
 
-input TeamInput {
-  name: String
-  description: String
-  creators: [ID]
-  members: [ID]
-  tech: [String] #Languages,Frameworks, Tools, IDE's and anything you work with
-  invitationCode: String
-}
