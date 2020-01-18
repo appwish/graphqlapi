@@ -19,9 +19,7 @@ public class GrpcClientVerticle extends AbstractVerticle {
   @Override
   public void start(final Promise<Void> startPromise) throws Exception {
     final WishGrpcClientService wishServiceStub = new WishGrpcClientService(vertx.eventBus(), grpcServiceStubsProvider.wishServiceStub());
-
     wishServiceStub.register();
-
     startPromise.complete();
   }
 }

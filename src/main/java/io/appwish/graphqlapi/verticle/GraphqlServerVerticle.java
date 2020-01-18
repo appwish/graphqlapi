@@ -23,11 +23,12 @@ import io.vertx.ext.web.handler.graphql.GraphiQLHandlerOptions;
  * */
 public class GraphqlServerVerticle extends AbstractVerticle {
 
+  public static final String GRAPHQL_ROUTE = "/graphql";
+  public static final String GRAPHIQL_ROUTE = "/graphiql/*";
+
   private static final String ENV = "env";
   private static final String DEV_ENV = "dev";
   private static final String GRAPHQL_SERVER_PORT = "appPort";
-  private static final String GRAPHQL_ROUTE = "/graphql";
-  private static final String GRAPHIQL_ROUTE = "/graphiql/*";
 
   private final JsonObject config;
 
