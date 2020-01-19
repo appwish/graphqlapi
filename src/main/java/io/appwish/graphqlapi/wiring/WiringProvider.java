@@ -1,5 +1,6 @@
 package io.appwish.graphqlapi.wiring;
 
+import graphql.scalars.ExtendedScalars;
 import graphql.schema.idl.RuntimeWiring;
 import io.appwish.graphqlapi.wiring.model.GraphQLType;
 
@@ -22,6 +23,7 @@ public class WiringProvider {
 
   public RuntimeWiring runtimeWiring() {
     final RuntimeWiring.Builder wiringBuilder = newRuntimeWiring();
+    RuntimeWiring.newRuntimeWiring().scalar(ExtendedScalars.DateTime);
     graphQLTypes.forEach(graphQLType -> wiringBuilder.type(graphQLType.getTypeName(), graphQLType.getTypeBuilderFunction()));
     return wiringBuilder.build();
   }

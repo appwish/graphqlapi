@@ -1,3 +1,6 @@
+"Custom Scalar Date"
+scalar DateTime
+
 
 input WishInput{
   author: ID!
@@ -16,17 +19,19 @@ type Wish {
   coverImageUrl: String
   votes: [Vote]
   comments: [Comment]
-  createdAt: String
-  updatedAt: String
+  createdAt: DateTime
+  updatedAt: DateTime
 }
+
+
 
 
 interface User {
   id: ID!
   userName: String!
   userProfileImage: String
-  createdAt: String
-  updatedAt: String
+  createdAt: DateTime
+  updatedAt: DateTime
 }
 
 type Wisher implements User{
@@ -35,8 +40,8 @@ type Wisher implements User{
   userProfileImage: String
   wishList: [Wish]
   feedTags: [String]
-  createdAt: String
-  updatedAt: String
+  createdAt: DateTime
+  updatedAt: DateTime
 }
 
 type Vote{
@@ -53,7 +58,7 @@ type Comment{
   message: String
   votes: [Vote]
   comments: [Comment]
-  createdAt: String
-  updatedAt: String
+  createdAt: DateTime
+  updatedAt: DateTime
 }
 
