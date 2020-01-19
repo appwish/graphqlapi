@@ -2,14 +2,6 @@
 scalar DateTime
 
 
-input WishInput{
-  author: ID!
-  title: String!
-  description: String!
-  tags: String!
-  coverImageUrl: String
-}
-
 type Wish {
   id: ID!
   author: Wisher!
@@ -23,8 +15,10 @@ type Wish {
   updatedAt: DateTime
 }
 
-
-
+type WishUpdate {
+  success: Boolean!
+  wish: Wish
+}
 
 interface User {
   id: ID!

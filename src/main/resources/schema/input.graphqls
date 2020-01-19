@@ -1,0 +1,8 @@
+
+input WishInput{
+  author: ID!
+  title: String!
+  description: String!
+  tags: String!
+  coverImageUrl: String
+}

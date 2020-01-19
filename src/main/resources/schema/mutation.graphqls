@@ -1,9 +1,9 @@
 type Mutation {
-   "Create a new App Wish "
-  addWish(wishDetails: WishInput): Wish
+  "Create a new App Wish "
+  addWish(input: WishInput): Wish
 
   "Edit an AppWish, providing the ID and the fields to update"
-  editWish(id: ID!, wishInput: WishInput): Wish
+  editWish(id: ID!, input: WishInput): Wish
 
   "Delete an AppWish by ID"
   deleteWish(id: ID!): Boolean
@@ -21,5 +21,6 @@ type Mutation {
   targetID is the ID for the comment/reply...
   voteUP will either increase or decrease votes"""
   vote(targetID: ID!,userID:ID!, voteUP: Boolean!): Vote
-
 }
+
+

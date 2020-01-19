@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-docker build -t pjeziorowski/graphqlapi . && docker push pjeziorowski/graphqlapi
+docker build -t appwish/graphqlapi . && docker push appwish/graphqlapi
