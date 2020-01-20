@@ -6,12 +6,12 @@ type Query {
   allWishes: [Wish!]!
 
   "Get all Wishes for Whiser"
-  myWishlist(userID: ID): [Wish]
+  myWishlist(userID: ID): [Wish!]!
 
   "Get all Comments for a target(a Wish or a Comment)"
-  comments(targetID: ID): [Comment]
+  comments(targetID: ID): [Comment!]!
 
   "Fets all the votes for a target(a Wish or a Comment)"
-  votes(targetID: ID): [Vote]
+  votes(targetID: ID): [Vote!]!
 }
 
