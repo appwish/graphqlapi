@@ -9,8 +9,8 @@ type Wish {
   description: String!
   tags: String!
   coverImageUrl: String
-  votes: [Vote]
-  comments: [Comment]
+  votes: [Vote!]!
+  comments: [Comment!]!
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -32,8 +32,8 @@ type Wisher implements User{
   id: ID!
   userName: String!
   userProfileImage: String
-  wishList: [Wish]
-  feedTags: [String]
+  wishList: [Wish!]!
+  feedTags: [String!]!
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -50,8 +50,8 @@ type Comment{
   targetID: ID!
   userID:ID!
   message: String
-  votes: [Vote]
-  comments: [Comment]
+  votes: [Vote!]!
+  comments: [Comment!]!
   createdAt: DateTime
   updatedAt: DateTime
 }
