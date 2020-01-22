@@ -5,9 +5,6 @@ type Query {
   "Gets all Wishes"
   allWishes: [Wish!]!
 
-  "Get all Wishes for Whiser"
-  myWishlist(userID: ID): [Wish!]!
-
   "Get all Comments for a target(a Wish or a Comment)"
   comments(targetID: ID): [Comment!]!
 
