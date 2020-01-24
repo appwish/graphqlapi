@@ -1,5 +1,7 @@
-input WishInput {
+
+input WishInput{
   title: String!
   content: String!
+  tags: [String!]!
   coverImageUrl: String
 }

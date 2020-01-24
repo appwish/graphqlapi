@@ -1,13 +1,50 @@
+"Custom Scalar Date"
+scalar DateTime
+
+
 type Wish {
- id: ID!
- authorId: ID!
- title: String!
- content: String!
- url: String!
- coverImageUrl: String
+  id: ID!
+  author: User!
+  title: String!
+  description: String!
+  tags: [String!]!
+  coverImageUrl: String
+  votes: [Vote!]!
+  comments: [Comment!]!
+  createdAt: DateTime
+  updatedAt: DateTime
 }
 
 type WishUpdate {
   success: Boolean!
   wish: Wish
 }
+
+type User {
+  id: ID!
+  userName: String!
+  userProfileImage: String
+  createdAt: DateTime
+  updatedAt: DateTime
+  wishList: [Wish!]!
+  feedTags: [String!]!
+}
+
+type Vote{
+  id: ID!
+  targetID: ID!
+  voter: User!
+  voteUp: Boolean!
+}
+
+type Comment{
+  id: ID!
+  targetID: ID!
+  userID:ID!
+  message: String
+  votes: [Vote!]!
+  comments: [Comment!]!
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+

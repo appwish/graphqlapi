@@ -1,4 +1,14 @@
 type Query {
+  "Get a wish by ID"
   wish(id: ID): Wish
-  allWish: [Wish!]!
+
+  "Gets all Wishes"
+  allWishes: [Wish!]!
+
+  "Get all Comments for a target(a Wish or a Comment)"
+  comments(targetID: ID): [Comment!]!
+
+  "Fets all the votes for a target(a Wish or a Comment)"
+  votes(targetID: ID): [Vote!]!
 }
+
