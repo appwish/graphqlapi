@@ -4,7 +4,7 @@ scalar DateTime
 
 type Wish {
   id: ID!
-  author: Wisher!
+  author: User!
   title: String!
   description: String!
   tags: String!
@@ -20,22 +20,14 @@ type WishUpdate {
   wish: Wish
 }
 
-interface User {
+type User {
   id: ID!
   userName: String!
   userProfileImage: String
   createdAt: DateTime
   updatedAt: DateTime
-}
-
-type Wisher implements User{
-  id: ID!
-  userName: String!
-  userProfileImage: String
   wishList: [Wish!]!
   feedTags: [String!]!
-  createdAt: DateTime
-  updatedAt: DateTime
 }
 
 type Vote{
