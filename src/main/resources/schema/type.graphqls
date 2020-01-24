@@ -7,7 +7,7 @@ type Wish {
   author: User!
   title: String!
   description: String!
-  tags: String!
+  tags: [String!]!
   coverImageUrl: String
   votes: [Vote!]!
   comments: [Comment!]!
