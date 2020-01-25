@@ -4,15 +4,15 @@ scalar DateTime
 
 type Wish {
   id: ID!
-  author: User!
+  #author: User!
   title: String!
-  description: String!
-  tags: [String!]!
+  content: String!
+  #tags: [String!]!
   coverImageUrl: String
-  votes: [Vote!]!
-  comments: [Comment!]!
-  createdAt: DateTime
-  updatedAt: DateTime
+  #votes: [Vote!]!
+  #comments: [Comment!]!
+  #createdAt: DateTime
+  #updatedAt: DateTime
 }
 
 type WishUpdate {

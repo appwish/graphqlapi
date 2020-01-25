@@ -1,6 +1,6 @@
 type Mutation {
   "Create a new App Wish "
-  createWish(input: WishInput): Wish
+  createWish(input: WishInput!): Wish
 
   "Update an AppWish, providing the ID and the fields to update"
   updateWish(id: ID!, input: WishInput): Wish
@@ -8,20 +8,18 @@ type Mutation {
   "Delete an AppWish by ID"
   deleteWish(id: ID!): Boolean
 
-  "Create a new comment... The userID will be retrieved from the auth token"
-  createComment(targetID:ID!, msg: String!): Comment
+  #"Create a new comment... The userID will be retrieved from the auth token"
+  #createComment(targetID:ID!, msg: String!): Comment
 
-  "Update a Comment... The userID will be retrieved from the auth token"
-  updateComment(commentID:ID!, msg: String!): Comment
+  #"Update a Comment... The userID will be retrieved from the auth token"
+  #updateComment(commentID:ID!, msg: String!): Comment
 
-  "Delete a Comment... The userID will be retrieved from the auth token"
-  deleteComment(commentID: ID): Boolean
+  #"Delete a Comment... The userID will be retrieved from the auth token"
+  #deleteComment(commentID: ID): Boolean
 
-  """Vote a Comment/Reply...j
-  targetID is the ID for the comment/reply...
-  voteUP will either increase or decrease votes.
-  The userID will be retrieved from the auth token"""
-  vote(targetID: ID!, voteUP: Boolean!): Vote
+  #"""Vote a Comment/Reply...j
+  #targetID is the ID for the comment/reply...
+  #voteUP will either increase or decrease votes.
+  #The userID will be retrieved from the auth token"""
+  #vote(targetID: ID!, voteUP: Boolean!): Vote
 }
-
-

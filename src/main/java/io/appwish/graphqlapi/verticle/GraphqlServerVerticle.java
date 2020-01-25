@@ -12,6 +12,7 @@ import io.appwish.graphqlapi.graphql.wiring.WishTypeRuntimeWiring;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
+import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.graphql.GraphQLHandler;
@@ -29,6 +30,11 @@ public class GraphqlServerVerticle extends AbstractVerticle {
   private static final String ENV = "env";
   private static final String DEV_ENV = "dev";
   private static final String GRAPHQL_SERVER_PORT = "appPort";
+
+  private static final String ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
+  private static final String ACCESS_CONTROL_ALLOW_HEADERS = "Access-Control-Allow-Headers";
+  private static final String ACCESS_CONTROL_ALLOW_METHOD = "Access-Control-Allow-Method";
+  private static final String ALL = "*";
 
   private final JsonObject config;
 
@@ -65,6 +71,22 @@ public class GraphqlServerVerticle extends AbstractVerticle {
     if (environment.equals(DEV_ENV)) {
       router.route(GRAPHIQL_ROUTE).handler(GraphiQLHandler.create(options));
     }
+
+    router.route(HttpMethod.OPTIONS, GRAPHQL_ROUTE).handler(event -> {
+      event.response()
+        .putHeader(ACCESS_CONTROL_ALLOW_ORIGIN, ALL)
+        .putHeader(ACCESS_CONTROL_ALLOW_HEADERS, ALL)
+        .putHeader(ACCESS_CONTROL_ALLOW_METHOD, ALL)
+        .end();
+    });
+
+    router.route(HttpMethod.POST, GRAPHQL_ROUTE).handler(event -> {
+      event.response()
+        .putHeader(ACCESS_CONTROL_ALLOW_ORIGIN, ALL)
+        .putHeader(ACCESS_CONTROL_ALLOW_HEADERS, ALL)
+        .putHeader(ACCESS_CONTROL_ALLOW_METHOD, ALL);
+      event.next();
+    });
 
     router.route(GRAPHQL_ROUTE).handler(GraphQLHandler.create(graphQL));
 

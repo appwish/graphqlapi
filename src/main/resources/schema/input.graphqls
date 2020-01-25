@@ -1,7 +1,6 @@
-
 input WishInput{
   title: String!
   content: String!
-  tags: [String!]!
+  #tags: [String!]!
   coverImageUrl: String
 }
