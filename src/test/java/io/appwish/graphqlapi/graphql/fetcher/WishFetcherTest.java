@@ -37,8 +37,8 @@ class WishFetcherTest {
   private static final String INPUT = "input";
   private static final String SOME_TITLE = "someTitle";
   private static final String TITLE = "title";
-  private static final String CONTENT = "content";
-  private static final String SOME_CONTENT = "some content";
+  private static final String MARKDOWN = "markdown";
+  private static final String SOME_MARKDOWN = "# Hello World! :)";
   private static final String COVER_IMAGE_URL = "coverImageUrl";
   private static final String SOME_URL = "someUrl";
 
@@ -68,7 +68,7 @@ class WishFetcherTest {
     });
 
     // when
-    final CompletionStage<List<WishProto>> action = fetcher.allWish(mock(DataFetchingEnvironment.class));
+    final CompletionStage<List<WishProtoWrapper>> action = fetcher.allWish(mock(DataFetchingEnvironment.class));
 
     // then
     action.whenComplete((wishProtos, throwable) -> {
@@ -92,7 +92,7 @@ class WishFetcherTest {
     });
 
     // when
-    final CompletionStage<List<WishProto>> action = fetcher.allWish(mock(DataFetchingEnvironment.class));
+    final CompletionStage<List<WishProtoWrapper>> action = fetcher.allWish(mock(DataFetchingEnvironment.class));
 
     // then
     action.whenComplete((wishProtos, throwable) -> {
@@ -120,7 +120,7 @@ class WishFetcherTest {
     });
 
     // when
-    final CompletionStage<WishProto> action = fetcher.wish(mock);
+    final CompletionStage<WishProtoWrapper> action = fetcher.wish(mock);
 
     // then
     action.whenComplete((wishProto, throwable) -> {
@@ -148,7 +148,7 @@ class WishFetcherTest {
     });
 
     // when
-    final CompletionStage<WishProto> action = fetcher.wish(mock);
+    final CompletionStage<WishProtoWrapper> action = fetcher.wish(mock);
 
     // then
     action.whenComplete((wishProto, throwable) -> {
@@ -174,7 +174,7 @@ class WishFetcherTest {
     });
 
     // when
-    final CompletionStage<WishProto> action = fetcher.wish(mock);
+    final CompletionStage<WishProtoWrapper> action = fetcher.wish(mock);
 
     // then
     action.whenComplete((wishProto, throwable) -> {
@@ -189,11 +189,11 @@ class WishFetcherTest {
   void should_create_and_return_created_wish(final Vertx vertx, final VertxTestContext context) {
     // given
     final DataFetchingEnvironment dataFetchingEnvironment = mock(DataFetchingEnvironment.class);
-    final Map<String, String> input = Map.of(TITLE, SOME_TITLE, CONTENT, SOME_CONTENT, COVER_IMAGE_URL, SOME_URL);
+    final Map<String, String> input = Map.of(TITLE, SOME_TITLE, MARKDOWN, SOME_MARKDOWN, COVER_IMAGE_URL, SOME_URL);
     final WishInputProto query = WishInputProto.newBuilder()
       .setTitle(SOME_TITLE)
       .setCoverImageUrl(SOME_URL)
-      .setContent(SOME_CONTENT).build();
+      .setMarkdown(SOME_MARKDOWN).build();
     when(dataFetchingEnvironment.getArgument(INPUT)).thenReturn(input);
     eventBus.<WishInputProto>consumer(Address.CREATE_WISH.get(), event -> {
       if (event.body().equals(query)) {
@@ -204,7 +204,7 @@ class WishFetcherTest {
     });
 
     // when
-    final CompletionStage<WishProto> action = fetcher.createWish(dataFetchingEnvironment);
+    final CompletionStage<WishProtoWrapper> action = fetcher.createWish(dataFetchingEnvironment);
 
     // then
     action.whenComplete((wishProto, throwable) -> {
@@ -219,11 +219,11 @@ class WishFetcherTest {
   void should_return_error_if_creating_wish_event_failed(final Vertx vertx, final VertxTestContext context) {
     // given
     final DataFetchingEnvironment dataFetchingEnvironment = mock(DataFetchingEnvironment.class);
-    final Map<String, String> input = Map.of(TITLE, SOME_TITLE, CONTENT, SOME_CONTENT, COVER_IMAGE_URL, SOME_URL);
+    final Map<String, String> input = Map.of(TITLE, SOME_TITLE, MARKDOWN, SOME_MARKDOWN, COVER_IMAGE_URL, SOME_URL);
     final WishInputProto query = WishInputProto.newBuilder()
       .setTitle(SOME_TITLE)
       .setCoverImageUrl(SOME_URL)
-      .setContent(SOME_CONTENT).build();
+      .setMarkdown(SOME_MARKDOWN).build();
     when(dataFetchingEnvironment.getArgument(INPUT)).thenReturn(input);
     eventBus.<WishInputProto>consumer(Address.CREATE_WISH.get(), event -> {
       if (event.body().equals(query)) {
@@ -234,7 +234,7 @@ class WishFetcherTest {
     });
 
     // when
-    final CompletionStage<WishProto> action = fetcher.createWish(dataFetchingEnvironment);
+    final CompletionStage<WishProtoWrapper> action = fetcher.createWish(dataFetchingEnvironment);
 
     // then
     action.whenComplete((wishProto, throwable) -> {
@@ -249,12 +249,12 @@ class WishFetcherTest {
   void should_update_wish_and_return_it(final Vertx vertx, final VertxTestContext context) {
     // given
     final DataFetchingEnvironment dataFetchingEnvironment = mock(DataFetchingEnvironment.class);
-    final Map<String, String> input = Map.of(TITLE, SOME_TITLE, CONTENT, SOME_CONTENT, COVER_IMAGE_URL, SOME_URL);
+    final Map<String, String> input = Map.of(TITLE, SOME_TITLE, MARKDOWN, SOME_MARKDOWN, COVER_IMAGE_URL, SOME_URL);
     final UpdateWishInputProto query = UpdateWishInputProto.newBuilder()
       .setTitle(SOME_TITLE)
       .setId(TestData.WISH_1.getId())
       .setCoverImageUrl(SOME_URL)
-      .setContent(SOME_CONTENT).build();
+      .setMarkdown(SOME_MARKDOWN).build();
     when(dataFetchingEnvironment.getArgument(INPUT)).thenReturn(input);
     when(dataFetchingEnvironment.getArgument(ID)).thenReturn(String.valueOf(TestData.WISH_1.getId()));
     eventBus.<UpdateWishInputProto>consumer(Address.UPDATE_WISH.get(), event -> {
@@ -266,7 +266,7 @@ class WishFetcherTest {
     });
 
     // when
-    final CompletionStage<WishProto> action = fetcher.updateWish(dataFetchingEnvironment);
+    final CompletionStage<WishProtoWrapper> action = fetcher.updateWish(dataFetchingEnvironment);
 
     // then
     action.whenComplete((wishProto, throwable) -> {
@@ -281,12 +281,12 @@ class WishFetcherTest {
   void should_return_empty_when_wish_to_update_doesnt_exist(final Vertx vertx, final VertxTestContext context) {
     // given
     final DataFetchingEnvironment dataFetchingEnvironment = mock(DataFetchingEnvironment.class);
-    final Map<String, String> input = Map.of(TITLE, SOME_TITLE, CONTENT, SOME_CONTENT, COVER_IMAGE_URL, SOME_URL);
+    final Map<String, String> input = Map.of(TITLE, SOME_TITLE, MARKDOWN, SOME_MARKDOWN, COVER_IMAGE_URL, SOME_URL);
     final UpdateWishInputProto query = UpdateWishInputProto.newBuilder()
       .setTitle(SOME_TITLE)
       .setId(TestData.WISH_1.getId())
       .setCoverImageUrl(SOME_URL)
-      .setContent(SOME_CONTENT).build();
+      .setMarkdown(SOME_MARKDOWN).build();
     when(dataFetchingEnvironment.getArgument(INPUT)).thenReturn(input);
     when(dataFetchingEnvironment.getArgument(ID)).thenReturn(String.valueOf(TestData.WISH_1.getId()));
     eventBus.<UpdateWishInputProto>consumer(Address.UPDATE_WISH.get(), event -> {
@@ -298,7 +298,7 @@ class WishFetcherTest {
     });
 
     // when
-    final CompletionStage<WishProto> action = fetcher.updateWish(dataFetchingEnvironment);
+    final CompletionStage<WishProtoWrapper> action = fetcher.updateWish(dataFetchingEnvironment);
 
     // then
     action.whenComplete((wishProto, throwable) -> {

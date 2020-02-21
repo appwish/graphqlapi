@@ -1,7 +1,7 @@
 package io.appwish.graphqlapi.grpc;
 
 import static io.appwish.graphqlapi.testutil.TestData.INVALID_ID;
-import static io.appwish.graphqlapi.testutil.TestData.SOME_CONTENT;
+import static io.appwish.graphqlapi.testutil.TestData.SOME_MARKDOWN;
 import static io.appwish.graphqlapi.testutil.TestData.SOME_TITLE;
 import static io.appwish.graphqlapi.testutil.TestData.SOME_URL;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -153,13 +153,10 @@ class WishGrpcClientServiceTest {
   void should_create_and_return_created_wish_data(final Vertx vertx, final VertxTestContext context) {
     // given
     mockSuccessfulResponsesFromWishservice();
-    final String my_title = SOME_TITLE;
-    final String my_url = SOME_URL;
-    final String my_content = SOME_CONTENT;
     final WishInputProto query = WishInputProto.newBuilder()
-      .setContent(my_content)
-      .setCoverImageUrl(my_url)
-      .setTitle(my_title).build();
+      .setMarkdown(SOME_MARKDOWN)
+      .setCoverImageUrl(SOME_URL)
+      .setTitle(SOME_TITLE).build();
 
     // when
     eventBus.<WishReplyProto>request(Address.CREATE_WISH.get(), query, event -> {
@@ -167,9 +164,9 @@ class WishGrpcClientServiceTest {
       //then
       context.verify(() -> {
         assertTrue(event.succeeded());
-        assertEquals(my_content, event.result().body().getWish().getContent());
-        assertEquals(my_title, event.result().body().getWish().getTitle());
-        assertEquals(my_url, event.result().body().getWish().getCoverImageUrl());
+        assertEquals(SOME_MARKDOWN, event.result().body().getWish().getMarkdown());
+        assertEquals(SOME_TITLE, event.result().body().getWish().getTitle());
+        assertEquals(SOME_URL, event.result().body().getWish().getCoverImageUrl());
         context.completeNow();
       });
     });
@@ -180,13 +177,10 @@ class WishGrpcClientServiceTest {
     final VertxTestContext context) {
     // given
     mockUnuccessfulResponsesFromWishservice();
-    final String my_title = SOME_TITLE;
-    final String my_url = SOME_URL;
-    final String my_content = SOME_CONTENT;
     final WishInputProto query = WishInputProto.newBuilder()
-      .setContent(my_content)
-      .setCoverImageUrl(my_url)
-      .setTitle(my_title).build();
+      .setMarkdown(SOME_MARKDOWN)
+      .setCoverImageUrl(SOME_URL)
+      .setTitle(SOME_TITLE).build();
 
     // when
     eventBus.<WishReplyProto>request(Address.CREATE_WISH.get(), query, event -> {
@@ -203,14 +197,11 @@ class WishGrpcClientServiceTest {
   void should_update_and_return_updated_wish(final Vertx vertx, final VertxTestContext context) {
     // given
     mockSuccessfulResponsesFromWishservice();
-    final String my_title = SOME_TITLE;
-    final String my_url = SOME_URL;
-    final String my_content = SOME_CONTENT;
     final UpdateWishInputProto query = UpdateWishInputProto.newBuilder()
-      .setContent(my_content)
-      .setCoverImageUrl(my_url)
+      .setMarkdown(SOME_MARKDOWN)
+      .setCoverImageUrl(SOME_URL)
       .setId(TestData.WISH_1.getId())
-      .setTitle(my_title).build();
+      .setTitle(SOME_TITLE).build();
 
     // when
     eventBus.<WishReplyProto>request(Address.UPDATE_WISH.get(), query, event -> {
@@ -218,9 +209,9 @@ class WishGrpcClientServiceTest {
       //then
       context.verify(() -> {
         assertTrue(event.succeeded());
-        assertEquals(my_content, event.result().body().getWish().getContent());
-        assertEquals(my_title, event.result().body().getWish().getTitle());
-        assertEquals(my_url, event.result().body().getWish().getCoverImageUrl());
+        assertEquals(SOME_MARKDOWN, event.result().body().getWish().getMarkdown());
+        assertEquals(SOME_TITLE, event.result().body().getWish().getTitle());
+        assertEquals(SOME_URL, event.result().body().getWish().getCoverImageUrl());
         assertEquals(TestData.WISH_1.getId(), event.result().body().getWish().getId());
         context.completeNow();
       });
@@ -232,7 +223,7 @@ class WishGrpcClientServiceTest {
     // given
     mockSuccessfulResponsesFromWishservice();
     final UpdateWishInputProto query = UpdateWishInputProto.newBuilder()
-      .setContent(SOME_CONTENT)
+      .setMarkdown(SOME_MARKDOWN)
       .setCoverImageUrl(SOME_URL)
       .setId(INVALID_ID)
       .setTitle(SOME_TITLE).build();
@@ -254,7 +245,7 @@ class WishGrpcClientServiceTest {
     // given
     mockUnuccessfulResponsesFromWishservice();
     final UpdateWishInputProto query = UpdateWishInputProto.newBuilder()
-      .setContent(SOME_CONTENT)
+      .setMarkdown(SOME_MARKDOWN)
       .setCoverImageUrl(SOME_URL)
       .setId(INVALID_ID)
       .setTitle(SOME_TITLE).build();

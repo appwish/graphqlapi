@@ -49,12 +49,12 @@ public class DummyWishService extends WishServiceGrpc.WishServiceVertxImplBase {
   @Override
   public void createWish(final WishInputProto request, final Promise<WishReplyProto> response) {
     final WishProto wish = WishProto.newBuilder()
-      .setUrl("NOT PASSED WITH REQUEST, IDs are also not passed so they're hardcoded")
+      .setSlug("NOT PASSED WITH REQUEST, IDs are also not passed so they're hardcoded")
       .setAuthorId(1)
       .setId(1)
       .setCoverImageUrl(request.getCoverImageUrl())
       .setTitle(request.getTitle())
-      .setContent(request.getContent())
+      .setMarkdown(request.getMarkdown())
       .build();
 
     response.complete(WishReplyProto.newBuilder().setWish(wish).build());
@@ -72,12 +72,12 @@ public class DummyWishService extends WishServiceGrpc.WishServiceVertxImplBase {
 
     if (any.isPresent()) {
       final WishProto wish = WishProto.newBuilder()
-        .setUrl(any.get().getUrl())
+        .setSlug(any.get().getSlug())
         .setAuthorId(any.get().getAuthorId())
         .setId(any.get().getId())
         .setCoverImageUrl(request.getCoverImageUrl())
         .setTitle(request.getTitle())
-        .setContent(request.getContent())
+        .setMarkdown(request.getMarkdown())
         .build();
 
       response.complete(WishReplyProto.newBuilder().setWish(wish).build());

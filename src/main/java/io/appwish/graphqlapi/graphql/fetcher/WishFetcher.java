@@ -1,5 +1,11 @@
 package io.appwish.graphqlapi.graphql.fetcher;
 
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
+import java.util.stream.Collectors;
+
 import graphql.schema.DataFetchingEnvironment;
 import io.appwish.graphqlapi.eventbus.Address;
 import io.appwish.grpc.AllWishQueryProto;
@@ -7,14 +13,9 @@ import io.appwish.grpc.AllWishReplyProto;
 import io.appwish.grpc.UpdateWishInputProto;
 import io.appwish.grpc.WishDeleteReplyProto;
 import io.appwish.grpc.WishInputProto;
-import io.appwish.grpc.WishProto;
 import io.appwish.grpc.WishQueryProto;
 import io.appwish.grpc.WishReplyProto;
 import io.vertx.core.eventbus.EventBus;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
 
 /**
  * Sends events on the event bus to resolve needs of wish-related part of GraphQL schema.
@@ -24,7 +25,7 @@ public class WishFetcher {
   private static final String ID = "id";
   private static final String INPUT = "input";
   private static final String TITLE = "title";
-  private static final String CONTENT = "content";
+  private static final String MARKDOWN = "markdown";
   private static final String COVER_IMAGE_URL = "coverImageUrl";
 
   private final EventBus eventBus;
@@ -33,13 +34,13 @@ public class WishFetcher {
     this.eventBus = eventBus;
   }
 
-  public CompletionStage<List<WishProto>> allWish(final DataFetchingEnvironment dataFetchingEnvironment) {
-    final CompletableFuture<List<WishProto>> completableFuture = new CompletableFuture<>();
+  public CompletionStage<List<WishProtoWrapper>> allWish(final DataFetchingEnvironment dataFetchingEnvironment) {
+    final CompletableFuture<List<WishProtoWrapper>> completableFuture = new CompletableFuture<>();
     final AllWishQueryProto query = AllWishQueryProto.newBuilder().build();
 
     eventBus.<AllWishReplyProto>request(Address.ALL_WISH.get(), query, event -> {
       if (event.succeeded()) {
-        completableFuture.complete(event.result().body().getWishesList());
+        completableFuture.complete(event.result().body().getWishesList().stream().map(WishProtoWrapper::new).collect(Collectors.toList()));
       } else {
         completableFuture.completeExceptionally(event.cause());
       }
@@ -48,14 +49,13 @@ public class WishFetcher {
     return completableFuture;
   }
 
-  public CompletionStage<WishProto> wish(final DataFetchingEnvironment dataFetchingEnvironment) {
-    final CompletableFuture<WishProto> completableFuture = new CompletableFuture<>();
-    final WishQueryProto query = WishQueryProto.newBuilder()
-      .setId(Long.valueOf(dataFetchingEnvironment.getArgument(ID))).build();
+  public CompletionStage<WishProtoWrapper> wish(final DataFetchingEnvironment dataFetchingEnvironment) {
+    final CompletableFuture<WishProtoWrapper> completableFuture = new CompletableFuture<>();
+    final WishQueryProto query = WishQueryProto.newBuilder().setId(Long.valueOf(dataFetchingEnvironment.getArgument(ID))).build();
 
     eventBus.<WishReplyProto>request(Address.WISH.get(), query, event -> {
       if (event.succeeded() && event.result().body().hasWish()) {
-        completableFuture.complete(event.result().body().getWish());
+        completableFuture.complete(new WishProtoWrapper(event.result().body().getWish()));
       } else if (event.succeeded()) {
         completableFuture.complete(null);
       } else {
@@ -66,21 +66,21 @@ public class WishFetcher {
     return completableFuture;
   }
 
-  public CompletionStage<WishProto> createWish(final DataFetchingEnvironment dataFetchingEnvironment) {
-    final CompletableFuture<WishProto> completableFuture = new CompletableFuture<>();
+  public CompletionStage<WishProtoWrapper> createWish(final DataFetchingEnvironment dataFetchingEnvironment) {
+    final CompletableFuture<WishProtoWrapper> completableFuture = new CompletableFuture<>();
     final Map<String, String> input = dataFetchingEnvironment.getArgument(INPUT);
     final String title = input.get(TITLE);
-    final String content = input.get(CONTENT);
+    final String markdown = input.get(MARKDOWN);
     final String coverImageUrl = input.get(COVER_IMAGE_URL);
     final WishInputProto wishInput = WishInputProto.newBuilder()
       .setTitle(title)
-      .setContent(content)
+      .setMarkdown(markdown)
       .setCoverImageUrl(coverImageUrl)
       .build();
 
     eventBus.<WishReplyProto>request(Address.CREATE_WISH.get(), wishInput, event -> {
       if (event.succeeded() && event.result().body().hasWish()) {
-        completableFuture.complete(event.result().body().getWish());
+        completableFuture.complete(new WishProtoWrapper(event.result().body().getWish()));
       } else if (event.succeeded()) {
         completableFuture.completeExceptionally(new AssertionError("It should always create and return a wish"));
       } else {
@@ -91,16 +91,16 @@ public class WishFetcher {
     return completableFuture;
   }
 
-  public CompletionStage<WishProto> updateWish(
+  public CompletionStage<WishProtoWrapper> updateWish(
     final DataFetchingEnvironment dataFetchingEnvironment) {
-    final CompletableFuture<WishProto> completableFuture = new CompletableFuture<>();
+    final CompletableFuture<WishProtoWrapper> completableFuture = new CompletableFuture<>();
     final Map<String, String> input = dataFetchingEnvironment.getArgument(INPUT);
     final String title = input.get(TITLE);
-    final String content = input.get(CONTENT);
+    final String markdown = input.get(MARKDOWN);
     final String coverImageUrl = input.get(COVER_IMAGE_URL);
     final UpdateWishInputProto wishInput = UpdateWishInputProto.newBuilder()
       .setTitle(title)
-      .setContent(content)
+      .setMarkdown(markdown)
       .setCoverImageUrl(coverImageUrl)
       .setId(Long.valueOf(dataFetchingEnvironment.getArgument(ID)))
       .build();
@@ -108,7 +108,7 @@ public class WishFetcher {
     eventBus.<WishReplyProto>request(Address.UPDATE_WISH.get(), wishInput,
       event -> {
         if (event.succeeded() && event.result().body().hasWish()) {
-          completableFuture.complete(event.result().body().getWish());
+          completableFuture.complete(new WishProtoWrapper(event.result().body().getWish()));
         } else if (event.succeeded()) {
           completableFuture.complete(null);
         } else {

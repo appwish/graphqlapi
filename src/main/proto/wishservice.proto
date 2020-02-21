@@ -1,20 +1,17 @@
 syntax = "proto3";
 
+import "google/protobuf/timestamp.proto";
+
 option java_multiple_files = true;
 option java_package = "io.appwish.grpc";
 option java_outer_classname = "WishGRPC";
 
 service WishService {
-  rpc GetAllWish (AllWishQueryProto) returns (AllWishReplyProto) {
-  }
-  rpc GetWish (WishQueryProto) returns (WishReplyProto) {
-  }
-  rpc CreateWish (WishInputProto) returns (WishReplyProto) {
-  }
-  rpc UpdateWish (UpdateWishInputProto) returns (WishReplyProto) {
-  }
-  rpc DeleteWish (WishQueryProto) returns (WishDeleteReplyProto) {
-  }
+  rpc GetAllWish (AllWishQueryProto) returns (AllWishReplyProto) {}
+  rpc GetWish (WishQueryProto) returns (WishReplyProto) {}
+  rpc CreateWish (WishInputProto) returns (WishReplyProto) {}
+  rpc UpdateWish (UpdateWishInputProto) returns (WishReplyProto) {}
+  rpc DeleteWish (WishQueryProto) returns (WishDeleteReplyProto) {}
 }
 
 message AllWishQueryProto {
@@ -38,22 +35,25 @@ message WishDeleteReplyProto {
 
 message WishProto {
   int64 id = 1;
-  int64 authorId = 2;
+  int64 author_id = 2;
   string title = 3;
-  string content = 4;
-  string url = 5;
-  string cover_image_url = 6;
+  string markdown = 4;
+  string html = 5;
+  string slug = 6;
+  string cover_image_url = 7;
+  google.protobuf.Timestamp created_at = 8;
+  google.protobuf.Timestamp updated_at = 9;
 }
 
 message WishInputProto {
   string title = 1;
-  string content = 2;
-  string coverImageUrl = 3;
+  string markdown = 2;
+  string cover_image_url = 3;
 }
 
 message UpdateWishInputProto {
-  string title = 1;
-  string content = 2;
-  string coverImageUrl = 3;
   int64 id = 4;
+  string title = 1;
+  string markdown = 2;
+  string cover_image_url = 3;
 }

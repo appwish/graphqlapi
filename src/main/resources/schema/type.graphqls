@@ -1,18 +1,17 @@
 "Custom Scalar Date"
 scalar DateTime
 
-
 type Wish {
   id: ID!
   #author: User!
   title: String!
-  content: String!
+  markdown: String!
   #tags: [String!]!
   coverImageUrl: String
   #votes: [Vote!]!
   #comments: [Comment!]!
-  #createdAt: DateTime
-  #updatedAt: DateTime
+  createdAt: DateTime
+  updatedAt: DateTime
 }
 
 type WishUpdate {
@@ -47,4 +46,3 @@ type Comment{
   createdAt: DateTime
   updatedAt: DateTime
 }
-
