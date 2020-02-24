@@ -5,6 +5,8 @@ import io.appwish.graphqlapi.grpc.GrpcServiceStubsProvider;
 import io.appwish.graphqlapi.verticle.GraphqlServerVerticle;
 import io.appwish.graphqlapi.verticle.GrpcClientVerticle;
 import io.vertx.config.ConfigRetriever;
+import io.vertx.config.ConfigRetrieverOptions;
+import io.vertx.config.ConfigStoreOptions;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.CompositeFuture;
 import io.vertx.core.DeploymentOptions;
@@ -19,7 +21,11 @@ public class MainVerticle extends AbstractVerticle {
 
   @Override
   public void start(Promise<Void> startPromise) throws Exception {
-    final ConfigRetriever configRetriever = ConfigRetriever.create(vertx);
+    final ConfigStoreOptions envs = new ConfigStoreOptions().setType("env");
+    final ConfigStoreOptions fileStore = new ConfigStoreOptions().setType("file").setConfig(new JsonObject().put("path", "conf/config.json"));
+    final ConfigRetrieverOptions options = new ConfigRetrieverOptions().addStore(fileStore).addStore(envs);
+    final ConfigRetriever configRetriever = ConfigRetriever.create(vertx, options);
+
     configRetriever.getConfig(event -> {
       final GrpcServiceStubsProvider grpcServiceStubsProvider = new GrpcServiceStubsProvider(vertx, event.result());
       final EventBusConfigurer eventBusConfigurer = new EventBusConfigurer(vertx.eventBus());
