@@ -32,7 +32,7 @@ public class GrpcServiceStubsProvider {
     final String wishServiceHost = config.getString(WISH_SERVICE_HOST);
     final Integer wishServicePort = config.getInteger(WISH_SERVICE_PORT);
 
-    LOG.info("Creating wishservice gRPC stub for address: {}:{}", wishServiceHost, wishServicePort);
+    LOG.info("Creating wishservice gRPC stub for address: " + wishServiceHost + ":" + wishServicePort);
 
     final ManagedChannel channel = VertxChannelBuilder
       .forAddress(vertx, wishServiceHost, wishServicePort)
