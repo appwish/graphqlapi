@@ -30,7 +30,7 @@ public class GrpcServiceStubsProvider {
     final Integer wishServicePort = config.getInteger(WISH_SERVICE_PORT);
     final ManagedChannel channel = VertxChannelBuilder
       .forAddress(vertx, wishServiceHost, wishServicePort)
-      .usePlaintext(true)
+      .usePlaintext()
       .build();
 
     return WishServiceGrpc.newVertxStub(channel);
