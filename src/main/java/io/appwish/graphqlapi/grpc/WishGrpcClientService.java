@@ -14,7 +14,6 @@ import io.vertx.core.eventbus.EventBus;
 public class WishGrpcClientService extends AbstractGrpcClientService<WishServiceVertxStub> {
 
   private static final int FAILURE_CODE = 1;
-  private static final String WISH_SERVICE_COMMUNICATION_ERROR_MESSAGE = "Could not access wish service";
 
   public WishGrpcClientService(final EventBus eventBus, final WishServiceVertxStub stub) {
     super(eventBus, stub);
@@ -27,7 +26,7 @@ public class WishGrpcClientService extends AbstractGrpcClientService<WishService
         if (grpc.succeeded()) {
           event.reply(grpc.result());
         } else {
-          event.fail(FAILURE_CODE, WISH_SERVICE_COMMUNICATION_ERROR_MESSAGE);
+          event.fail(FAILURE_CODE, grpc.cause().getMessage());
         }
       });
     });
@@ -37,7 +36,7 @@ public class WishGrpcClientService extends AbstractGrpcClientService<WishService
         if (grpc.succeeded()) {
           event.reply(grpc.result());
         } else {
-          event.fail(FAILURE_CODE, WISH_SERVICE_COMMUNICATION_ERROR_MESSAGE);
+          event.fail(FAILURE_CODE, grpc.cause().getMessage());
         }
       });
     });
@@ -47,7 +46,7 @@ public class WishGrpcClientService extends AbstractGrpcClientService<WishService
         if (grpc.succeeded()) {
           event.reply(grpc.result());
         } else {
-          event.fail(FAILURE_CODE, WISH_SERVICE_COMMUNICATION_ERROR_MESSAGE);
+          event.fail(FAILURE_CODE, grpc.cause().getMessage());
         }
       });
     });
@@ -57,7 +56,7 @@ public class WishGrpcClientService extends AbstractGrpcClientService<WishService
         if (grpc.succeeded()) {
           event.reply(grpc.result());
         } else {
-          event.fail(FAILURE_CODE, WISH_SERVICE_COMMUNICATION_ERROR_MESSAGE);
+          event.fail(FAILURE_CODE, grpc.cause().getMessage());
         }
       });
     });
@@ -67,7 +66,7 @@ public class WishGrpcClientService extends AbstractGrpcClientService<WishService
         if (grpc.succeeded()) {
           event.reply(grpc.result());
         } else {
-          event.fail(FAILURE_CODE, WISH_SERVICE_COMMUNICATION_ERROR_MESSAGE);
+          event.fail(FAILURE_CODE, grpc.cause().getMessage());
         }
       });
     });
