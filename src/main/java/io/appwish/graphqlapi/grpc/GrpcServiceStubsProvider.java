@@ -1,5 +1,7 @@
 package io.appwish.graphqlapi.grpc;
 
+import io.appwish.grpc.VoteServiceGrpc;
+import io.appwish.grpc.VoteServiceGrpc.VoteServiceVertxStub;
 import io.appwish.grpc.WishServiceGrpc;
 import io.grpc.ManagedChannel;
 import io.vertx.core.Vertx;
@@ -40,5 +42,22 @@ public class GrpcServiceStubsProvider {
       .build();
 
     return WishServiceGrpc.newVertxStub(channel);
+  }
+
+  /**
+   * Vote service stub can be used to fetch data from vote service
+   */
+  public VoteServiceVertxStub voteServiceStub() {
+    final String voteServiceHost = config.getString("voteServiceHost");
+    final Integer voteServicePort = config.getInteger("voteServicePort");
+
+    LOG.info("Creating voteservice gRPC stub for address: " + voteServiceHost + ":" + voteServicePort);
+
+    final ManagedChannel channel = VertxChannelBuilder
+      .forAddress(vertx, voteServiceHost, voteServicePort)
+      .usePlaintext()
+      .build();
+
+    return VoteServiceGrpc.newVertxStub(channel);
   }
 }

@@ -1,0 +1,66 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+option java_multiple_files = true;
+option java_package = "io.appwish.grpc";
+option java_outer_classname = "VoteGRPC";
+
+service VoteService {
+  rpc GetAllVote (AllVoteQueryProto) returns (AllVoteReplyProto) {}
+  rpc GetVote (VoteQueryProto) returns (VoteReplyProto) {}
+  rpc CreateVote (VoteInputProto) returns (VoteReplyProto) {}
+  rpc UpdateVote (UpdateVoteInputProto) returns (VoteReplyProto) {}
+  rpc DeleteVote (VoteQueryProto) returns (VoteDeleteReplyProto) {}
+}
+
+message AllVoteQueryProto {}
+
+message VoteQueryProto {
+  int64 id = 1;
+}
+
+message AllVoteReplyProto {
+  repeated VoteProto votes = 1;
+}
+
+message VoteReplyProto {
+  VoteProto vote = 1;
+}
+
+message VoteDeleteReplyProto {
+  bool deleted = 1;
+}
+
+enum ItemTypeProto {
+  WISH = 0;
+  COMMENT = 1;
+}
+
+enum VoteTypeProto {
+  UP = 0;
+  DOWN = 1;
+}
+
+message VoteProto {
+  int64 id = 1;
+  int64 userId = 2;
+  int64 itemId = 3;
+  ItemTypeProto itemType = 4;
+  google.protobuf.Timestamp created_at = 5;
+  VoteTypeProto voteType = 6;
+}
+
+message VoteInputProto {
+  int64 userId = 1;
+  int64 itemId = 2;
+  ItemTypeProto itemType = 3;
+  VoteTypeProto voteType = 4;
+}
+
+message UpdateVoteInputProto {
+  int64 userId = 1;
+  int64 itemId = 2;
+  ItemTypeProto itemType = 3;
+  VoteTypeProto voteType = 4;
+}

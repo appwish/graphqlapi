@@ -4,10 +4,12 @@ import graphql.GraphQL;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.idl.SchemaGenerator;
 import graphql.schema.idl.TypeDefinitionRegistry;
+import io.appwish.graphqlapi.graphql.fetcher.VoteFetcher;
 import io.appwish.graphqlapi.graphql.fetcher.WishFetcher;
 import io.appwish.graphqlapi.graphql.schema.SchemaDefinitionProvider;
 import io.appwish.graphqlapi.graphql.wiring.RuntimeWiringProvider;
 import io.appwish.graphqlapi.graphql.wiring.TypeRuntimeWiringCollection;
+import io.appwish.graphqlapi.graphql.wiring.VoteTypeRuntimeWiring;
 import io.appwish.graphqlapi.graphql.wiring.WishTypeRuntimeWiring;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
@@ -52,8 +54,10 @@ public class GraphqlServerVerticle extends AbstractVerticle {
 
     // type runtime wiring
     final WishFetcher wishFetcher = new WishFetcher(vertx.eventBus());
+    final VoteFetcher voteFetcher = new VoteFetcher(vertx.eventBus());
     final TypeRuntimeWiringCollection wishTypes = new WishTypeRuntimeWiring(wishFetcher);
-    final RuntimeWiringProvider runtimeWiringProvider = new RuntimeWiringProvider(wishTypes);
+    final TypeRuntimeWiringCollection voteTypes = new VoteTypeRuntimeWiring(voteFetcher);
+    final RuntimeWiringProvider runtimeWiringProvider = new RuntimeWiringProvider(wishTypes, voteTypes);
 
     final GraphQLSchema graphQLSchema = schemaGenerator.makeExecutableSchema(definitionRegistry, runtimeWiringProvider.createRuntimeWiring());
     final GraphQL graphQL = GraphQL.newGraphQL(graphQLSchema).build();

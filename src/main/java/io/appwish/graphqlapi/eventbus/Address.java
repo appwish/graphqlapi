@@ -8,7 +8,8 @@ public enum Address {
   WISH("wishservice.get.one.wish"),
   CREATE_WISH("wishservice.create.one.wish"),
   UPDATE_WISH("wishservice.update.one.wish"),
-  DELETE_WISH("wishservice.delete.one.wish");
+  DELETE_WISH("wishservice.delete.one.wish"),
+  VOTE("voteservice.vote");
 
   private String value;
 

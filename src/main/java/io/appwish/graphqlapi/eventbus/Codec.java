@@ -3,6 +3,8 @@ package io.appwish.graphqlapi.eventbus;
 import io.appwish.grpc.AllWishQueryProto;
 import io.appwish.grpc.AllWishReplyProto;
 import io.appwish.grpc.UpdateWishInputProto;
+import io.appwish.grpc.VoteInputProto;
+import io.appwish.grpc.VoteReplyProto;
 import io.appwish.grpc.WishDeleteReplyProto;
 import io.appwish.grpc.WishInputProto;
 import io.appwish.grpc.WishProto;
@@ -27,7 +29,9 @@ public enum Codec {
   WISH_DELETE_REPLY(new LocalReferenceCodec<>(WishDeleteReplyProto.class)),
   ALL_WISH_QUERY(new LocalReferenceCodec<>(AllWishQueryProto.class)),
   WISH_QUERY(new LocalReferenceCodec<>(WishQueryProto.class)),
-  WISH_INPUT(new LocalReferenceCodec<>(WishInputProto.class));
+  WISH_INPUT(new LocalReferenceCodec<>(WishInputProto.class)),
+  VOTE_INPUT(new LocalReferenceCodec<>(VoteInputProto.class)),
+  VOTE_REPLY(new LocalReferenceCodec<>(VoteReplyProto.class));
 
   private final LocalReferenceCodec codec;
 

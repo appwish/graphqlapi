@@ -31,9 +31,8 @@ type User {
 
 type Vote{
   id: ID!
-  targetID: ID!
-  voter: User!
-  voteUp: Boolean!
+  itemId: ID!
+  itemType: ItemType!
 }
 
 type Comment{

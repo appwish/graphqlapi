@@ -4,3 +4,17 @@ input WishInput{
   #tags: [String!]!
   coverImageUrl: String
 }
+
+input VoteInput{
+  itemId: ID!
+  itemType: ItemType!
+  voteType: VoteType!
+}
+
+enum ItemType{
+  WISH, COMMENT
+}
+
+enum VoteType{
+  UP, DOWN
+}

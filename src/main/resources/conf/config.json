@@ -2,6 +2,8 @@
   "env": "dev",
   "appPort": 8000,
   "wishServiceHost": "localhost",
-  "wishServicePort": 8080,
+  "wishServicePort": 8081,
+  "voteServiceHost": "localhost",
+  "voteServicePort": 8082,
   "schemaDirPath": "schema"
 }
