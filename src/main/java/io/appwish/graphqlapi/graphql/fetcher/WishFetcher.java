@@ -1,5 +1,8 @@
 package io.appwish.graphqlapi.graphql.fetcher;
 
+import io.vertx.core.eventbus.DeliveryOptions;
+import io.vertx.core.json.JsonObject;
+import io.vertx.ext.web.RoutingContext;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -35,10 +38,13 @@ public class WishFetcher {
   }
 
   public CompletionStage<List<WishProtoWrapper>> allWish(final DataFetchingEnvironment dataFetchingEnvironment) {
+    final RoutingContext context = dataFetchingEnvironment.getLocalContext();
+    final JsonObject user = context.get("user");
+    final String email = user.getString("email");
     final CompletableFuture<List<WishProtoWrapper>> completableFuture = new CompletableFuture<>();
     final AllWishQueryProto query = AllWishQueryProto.newBuilder().build();
 
-    eventBus.<AllWishReplyProto>request(Address.ALL_WISH.get(), query, event -> {
+    eventBus.<AllWishReplyProto>request(Address.ALL_WISH.get(), query, new DeliveryOptions().addHeader("email", email), event -> {
       if (event.succeeded()) {
         completableFuture.complete(event.result().body().getWishesList().stream().map(WishProtoWrapper::new).collect(Collectors.toList()));
       } else {

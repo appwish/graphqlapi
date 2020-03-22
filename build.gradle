@@ -33,6 +33,8 @@ dependencies {
   implementation "io.vertx:vertx-config:$vertxVersion"
   implementation "javax.annotation:javax.annotation-api:1.3.2"
   implementation 'com.graphql-java:graphql-java-extended-scalars:1.0'
+  implementation 'com.google.oauth-client:google-oauth-client:1.30.6'
+  implementation 'com.google.api-client:google-api-client-gson:1.30.6'
 
   testImplementation "io.vertx:vertx-web-client:$vertxVersion"
   testImplementation "io.vertx:vertx-junit5:$vertxVersion"

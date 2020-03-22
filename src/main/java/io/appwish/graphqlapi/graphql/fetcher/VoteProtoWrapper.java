@@ -1,6 +1,5 @@
 package io.appwish.graphqlapi.graphql.fetcher;
 
-
 import io.appwish.grpc.VoteProto;
 import java.time.Instant;
 import java.time.LocalDateTime;

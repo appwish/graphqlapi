@@ -1,5 +1,8 @@
 package io.appwish.graphqlapi.verticle;
 
+import com.google.api.client.auth.openidconnect.IdTokenVerifier;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.gson.GsonFactory;
 import graphql.GraphQL;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.idl.SchemaGenerator;
@@ -11,6 +14,7 @@ import io.appwish.graphqlapi.graphql.wiring.RuntimeWiringProvider;
 import io.appwish.graphqlapi.graphql.wiring.TypeRuntimeWiringCollection;
 import io.appwish.graphqlapi.graphql.wiring.VoteTypeRuntimeWiring;
 import io.appwish.graphqlapi.graphql.wiring.WishTypeRuntimeWiring;
+import io.appwish.graphqlapi.verticle.handler.UserContextInjector;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
@@ -47,6 +51,7 @@ public class GraphqlServerVerticle extends AbstractVerticle {
   @Override
   public void start(final Promise<Void> startPromise) {
     final int graphqlServerPort = config.getInteger(GRAPHQL_SERVER_PORT);
+
     // schema definition
     final SchemaGenerator schemaGenerator = new SchemaGenerator();
     final SchemaDefinitionProvider schemaDefinitionProvider = new SchemaDefinitionProvider(vertx, config);
@@ -71,6 +76,8 @@ public class GraphqlServerVerticle extends AbstractVerticle {
   private Router prepareRouter(final Vertx vertx, final GraphQL graphQL, final GraphiQLHandlerOptions options, final JsonObject config) {
     final Router router = Router.router(vertx);
     final String environment = config.getString(ENV);
+    final JsonFactory jsonFactory = new GsonFactory();
+    final IdTokenVerifier tokenVerifier = new IdTokenVerifier();
 
     if (environment.equals(DEV_ENV)) {
       router.route(GRAPHIQL_ROUTE).handler(GraphiQLHandler.create(options));
@@ -91,6 +98,8 @@ public class GraphqlServerVerticle extends AbstractVerticle {
         .putHeader(ACCESS_CONTROL_ALLOW_METHOD, ALL);
       event.next();
     });
+
+    router.route(HttpMethod.POST, GRAPHQL_ROUTE).handler(new UserContextInjector(jsonFactory, tokenVerifier));
 
     router.route(GRAPHQL_ROUTE).handler(GraphQLHandler.create(graphQL));
 

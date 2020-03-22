@@ -6,6 +6,7 @@ import io.appwish.grpc.UpdateWishInputProto;
 import io.appwish.grpc.WishInputProto;
 import io.appwish.grpc.WishQueryProto;
 import io.appwish.grpc.WishServiceGrpc.WishServiceVertxStub;
+import io.grpc.CallOptions.Key;
 import io.vertx.core.eventbus.EventBus;
 
 /**
@@ -13,6 +14,7 @@ import io.vertx.core.eventbus.EventBus;
  */
 public class WishGrpcClientService extends AbstractGrpcClientService<WishServiceVertxStub> {
 
+  private static final Key<String> AUTHORIZATION = Key.create("email");
   private static final int FAILURE_CODE = 1;
 
   public WishGrpcClientService(final EventBus eventBus, final WishServiceVertxStub stub) {
@@ -22,7 +24,7 @@ public class WishGrpcClientService extends AbstractGrpcClientService<WishService
   @Override
   public void register() {
     eventBus.<AllWishQueryProto>consumer(Address.ALL_WISH.get(), event -> {
-      stub.getAllWish(event.body(), grpc -> {
+      stub.withOption(AUTHORIZATION, event.headers().get("email")).getAllWish(event.body(), grpc -> {
         if (grpc.succeeded()) {
           event.reply(grpc.result());
         } else {
@@ -32,7 +34,7 @@ public class WishGrpcClientService extends AbstractGrpcClientService<WishService
     });
 
     eventBus.<WishQueryProto>consumer(Address.WISH.get(), event -> {
-      stub.getWish(event.body(), grpc -> {
+      stub.withOption(AUTHORIZATION, event.headers().get("authorization")).getWish(event.body(), grpc -> {
         if (grpc.succeeded()) {
           event.reply(grpc.result());
         } else {
@@ -42,7 +44,7 @@ public class WishGrpcClientService extends AbstractGrpcClientService<WishService
     });
 
     eventBus.<WishInputProto>consumer(Address.CREATE_WISH.get(), event -> {
-      stub.createWish(event.body(), grpc -> {
+      stub.withOption(AUTHORIZATION, event.headers().get("authorization")).createWish(event.body(), grpc -> {
         if (grpc.succeeded()) {
           event.reply(grpc.result());
         } else {
@@ -52,7 +54,7 @@ public class WishGrpcClientService extends AbstractGrpcClientService<WishService
     });
 
     eventBus.<WishQueryProto>consumer(Address.DELETE_WISH.get(), event -> {
-      stub.deleteWish(event.body(), grpc -> {
+      stub.withOption(AUTHORIZATION, event.headers().get("authorization")).deleteWish(event.body(), grpc -> {
         if (grpc.succeeded()) {
           event.reply(grpc.result());
         } else {
@@ -62,7 +64,7 @@ public class WishGrpcClientService extends AbstractGrpcClientService<WishService
     });
 
     eventBus.<UpdateWishInputProto>consumer(Address.UPDATE_WISH.get(), event -> {
-      stub.updateWish(event.body(), grpc -> {
+      stub.withOption(AUTHORIZATION, event.headers().get("authorization")).updateWish(event.body(), grpc -> {
         if (grpc.succeeded()) {
           event.reply(grpc.result());
         } else {
