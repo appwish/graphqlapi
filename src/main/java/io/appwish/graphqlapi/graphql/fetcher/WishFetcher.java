@@ -30,6 +30,8 @@ public class WishFetcher {
   private static final String TITLE = "title";
   private static final String MARKDOWN = "markdown";
   private static final String COVER_IMAGE_URL = "coverImageUrl";
+  private static final String USER_ID = "userId";
+  private static final String USER = "user";
 
   private final EventBus eventBus;
 
@@ -38,13 +40,12 @@ public class WishFetcher {
   }
 
   public CompletionStage<List<WishProtoWrapper>> allWish(final DataFetchingEnvironment dataFetchingEnvironment) {
-    final RoutingContext context = dataFetchingEnvironment.getLocalContext();
-    final JsonObject user = context.get("user");
-    final String email = user.getString("email");
     final CompletableFuture<List<WishProtoWrapper>> completableFuture = new CompletableFuture<>();
     final AllWishQueryProto query = AllWishQueryProto.newBuilder().build();
+    final String userId = getUserIdFrom(dataFetchingEnvironment);
 
-    eventBus.<AllWishReplyProto>request(Address.ALL_WISH.get(), query, new DeliveryOptions().addHeader("email", email), event -> {
+    eventBus.<AllWishReplyProto>request(
+      Address.ALL_WISH.get(), query, new DeliveryOptions().addHeader(USER_ID, userId), event -> {
       if (event.succeeded()) {
         completableFuture.complete(event.result().body().getWishesList().stream().map(WishProtoWrapper::new).collect(Collectors.toList()));
       } else {
@@ -58,8 +59,10 @@ public class WishFetcher {
   public CompletionStage<WishProtoWrapper> wish(final DataFetchingEnvironment dataFetchingEnvironment) {
     final CompletableFuture<WishProtoWrapper> completableFuture = new CompletableFuture<>();
     final WishQueryProto query = WishQueryProto.newBuilder().setId(Long.valueOf(dataFetchingEnvironment.getArgument(ID))).build();
+    final String userId = getUserIdFrom(dataFetchingEnvironment);
 
-    eventBus.<WishReplyProto>request(Address.WISH.get(), query, event -> {
+    eventBus.<WishReplyProto>request(
+      Address.WISH.get(), query, new DeliveryOptions().addHeader(USER_ID, userId), event -> {
       if (event.succeeded() && event.result().body().hasWish()) {
         completableFuture.complete(new WishProtoWrapper(event.result().body().getWish()));
       } else if (event.succeeded()) {
@@ -78,13 +81,15 @@ public class WishFetcher {
     final String title = input.get(TITLE);
     final String markdown = input.get(MARKDOWN);
     final String coverImageUrl = input.get(COVER_IMAGE_URL);
+    final String userId = getUserIdFrom(dataFetchingEnvironment);
     final WishInputProto wishInput = WishInputProto.newBuilder()
       .setTitle(title)
       .setMarkdown(markdown)
       .setCoverImageUrl(coverImageUrl)
       .build();
 
-    eventBus.<WishReplyProto>request(Address.CREATE_WISH.get(), wishInput, event -> {
+    eventBus.<WishReplyProto>request(
+      Address.CREATE_WISH.get(), wishInput, new DeliveryOptions().addHeader(USER_ID, userId), event -> {
       if (event.succeeded() && event.result().body().hasWish()) {
         completableFuture.complete(new WishProtoWrapper(event.result().body().getWish()));
       } else if (event.succeeded()) {
@@ -104,6 +109,7 @@ public class WishFetcher {
     final String title = input.get(TITLE);
     final String markdown = input.get(MARKDOWN);
     final String coverImageUrl = input.get(COVER_IMAGE_URL);
+    final String userId = getUserIdFrom(dataFetchingEnvironment);
     final UpdateWishInputProto wishInput = UpdateWishInputProto.newBuilder()
       .setTitle(title)
       .setMarkdown(markdown)
@@ -111,8 +117,8 @@ public class WishFetcher {
       .setId(Long.valueOf(dataFetchingEnvironment.getArgument(ID)))
       .build();
 
-    eventBus.<WishReplyProto>request(Address.UPDATE_WISH.get(), wishInput,
-      event -> {
+    eventBus.<WishReplyProto>request(
+      Address.UPDATE_WISH.get(), wishInput, new DeliveryOptions().addHeader(USER_ID, userId), event -> {
         if (event.succeeded() && event.result().body().hasWish()) {
           completableFuture.complete(new WishProtoWrapper(event.result().body().getWish()));
         } else if (event.succeeded()) {
@@ -127,9 +133,10 @@ public class WishFetcher {
 
   public CompletionStage<Boolean> deleteWish(final DataFetchingEnvironment dataFetchingEnvironment) { final CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
     final WishQueryProto query = WishQueryProto.newBuilder().setId(Long.valueOf(dataFetchingEnvironment.getArgument(ID))).build();
+    final String userId = getUserIdFrom(dataFetchingEnvironment);
 
-    eventBus.<WishDeleteReplyProto>request(Address.DELETE_WISH.get(), query,
-      event -> {
+    eventBus.<WishDeleteReplyProto>request(
+      Address.DELETE_WISH.get(), query, new DeliveryOptions().addHeader(USER_ID, userId), event -> {
         if (event.succeeded()) {
           completableFuture.complete(event.result().body().getDeleted());
         } else {
@@ -138,5 +145,11 @@ public class WishFetcher {
       });
 
     return completableFuture;
+  }
+
+  private String getUserIdFrom(final DataFetchingEnvironment environment) {
+    final RoutingContext context = environment.getLocalContext();
+    final JsonObject user = context.get(USER);
+    return user.getString(USER_ID);
   }
 }

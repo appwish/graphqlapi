@@ -47,7 +47,9 @@ public class UserContextInjector implements Handler<RoutingContext> {
           .put("email", email)
           .put("firstName", givenName)
           .put("lastName", familyName)
-          .put("identityProvider", issuer);
+          .put("identityProvider", issuer)
+          // TODO this can't be ID, I leave this just for testing for now
+          .put("userId", issuer + "-" + email);
 
         event.put("user", userData);
       }
