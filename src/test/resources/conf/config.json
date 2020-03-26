@@ -3,5 +3,7 @@
   "appPort": 8787,
   "wishServiceHost": "localhost",
   "wishServicePort": 7777,
-  "schemaDirPath": "schema"
+  "schemaDirPath": "schema",
+  "voteServiceHost": "localhost",
+  "voteServicePort": 8888
 }
