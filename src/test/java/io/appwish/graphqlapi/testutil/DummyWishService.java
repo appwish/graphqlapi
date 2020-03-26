@@ -50,7 +50,7 @@ public class DummyWishService extends WishServiceGrpc.WishServiceVertxImplBase {
   public void createWish(final WishInputProto request, final Promise<WishReplyProto> response) {
     final WishProto wish = WishProto.newBuilder()
       .setSlug("NOT PASSED WITH REQUEST, IDs are also not passed so they're hardcoded")
-      .setAuthorId(1)
+      .setAuthorId("1")
       .setId(1)
       .setCoverImageUrl(request.getCoverImageUrl())
       .setTitle(request.getTitle())
