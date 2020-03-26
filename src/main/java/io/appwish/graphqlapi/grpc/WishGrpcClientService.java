@@ -10,6 +10,8 @@ import io.grpc.Metadata;
 import io.grpc.stub.MetadataUtils;
 import io.vertx.core.eventbus.EventBus;
 
+import static java.util.Objects.isNull;
+
 /**
  * Exposes methods of wish service gRPC client on the event bus.
  */
@@ -26,7 +28,12 @@ public class WishGrpcClientService extends AbstractGrpcClientService<WishService
   public void register() {
     eventBus.<AllWishQueryProto>consumer(Address.ALL_WISH.get(), event -> {
       final Metadata metadata = new Metadata();
-      metadata.put(Metadata.Key.of(USER_ID, Metadata.ASCII_STRING_MARSHALLER), event.headers().get(USER_ID));
+      final String userId = event.headers().get(USER_ID);
+
+      if (!isNull(userId)) {
+        metadata.put(Metadata.Key.of(USER_ID, Metadata.ASCII_STRING_MARSHALLER), userId);
+      }
+
       stub.withInterceptors(MetadataUtils.newAttachHeadersInterceptor(metadata)).getAllWish(event.body(), grpc -> {
         if (grpc.succeeded()) {
           event.reply(grpc.result());
@@ -38,7 +45,12 @@ public class WishGrpcClientService extends AbstractGrpcClientService<WishService
 
     eventBus.<WishQueryProto>consumer(Address.WISH.get(), event -> {
       final Metadata metadata = new Metadata();
-      metadata.put(Metadata.Key.of(USER_ID, Metadata.ASCII_STRING_MARSHALLER), event.headers().get(USER_ID));
+      final String userId = event.headers().get(USER_ID);
+
+      if (!isNull(userId)) {
+        metadata.put(Metadata.Key.of(USER_ID, Metadata.ASCII_STRING_MARSHALLER), userId);
+      }
+
       stub.withInterceptors(MetadataUtils.newAttachHeadersInterceptor(metadata)).getWish(event.body(), grpc -> {
         if (grpc.succeeded()) {
           event.reply(grpc.result());
@@ -50,7 +62,12 @@ public class WishGrpcClientService extends AbstractGrpcClientService<WishService
 
     eventBus.<WishInputProto>consumer(Address.CREATE_WISH.get(), event -> {
       final Metadata metadata = new Metadata();
-      metadata.put(Metadata.Key.of(USER_ID, Metadata.ASCII_STRING_MARSHALLER), event.headers().get(USER_ID));
+      final String userId = event.headers().get(USER_ID);
+
+      if (!isNull(userId)) {
+        metadata.put(Metadata.Key.of(USER_ID, Metadata.ASCII_STRING_MARSHALLER), userId);
+      }
+
       stub.withInterceptors(MetadataUtils.newAttachHeadersInterceptor(metadata)).createWish(event.body(), grpc -> {
         if (grpc.succeeded()) {
           event.reply(grpc.result());
@@ -62,7 +79,12 @@ public class WishGrpcClientService extends AbstractGrpcClientService<WishService
 
     eventBus.<WishQueryProto>consumer(Address.DELETE_WISH.get(), event -> {
       final Metadata metadata = new Metadata();
-      metadata.put(Metadata.Key.of(USER_ID, Metadata.ASCII_STRING_MARSHALLER), event.headers().get(USER_ID));
+      final String userId = event.headers().get(USER_ID);
+
+      if (!isNull(userId)) {
+        metadata.put(Metadata.Key.of(USER_ID, Metadata.ASCII_STRING_MARSHALLER), userId);
+      }
+
       stub.withInterceptors(MetadataUtils.newAttachHeadersInterceptor(metadata)).deleteWish(event.body(), grpc -> {
         if (grpc.succeeded()) {
           event.reply(grpc.result());
@@ -74,7 +96,12 @@ public class WishGrpcClientService extends AbstractGrpcClientService<WishService
 
     eventBus.<UpdateWishInputProto>consumer(Address.UPDATE_WISH.get(), event -> {
       final Metadata metadata = new Metadata();
-      metadata.put(Metadata.Key.of(USER_ID, Metadata.ASCII_STRING_MARSHALLER), event.headers().get(USER_ID));
+      final String userId = event.headers().get(USER_ID);
+
+      if (!isNull(userId)) {
+        metadata.put(Metadata.Key.of(USER_ID, Metadata.ASCII_STRING_MARSHALLER), userId);
+      }
+
       stub.withInterceptors(MetadataUtils.newAttachHeadersInterceptor(metadata)).updateWish(event.body(), grpc -> {
         if (grpc.succeeded()) {
           event.reply(grpc.result());

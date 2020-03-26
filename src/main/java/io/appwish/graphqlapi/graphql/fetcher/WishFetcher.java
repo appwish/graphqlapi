@@ -1,24 +1,20 @@
 package io.appwish.graphqlapi.graphql.fetcher;
 
+import graphql.schema.DataFetchingEnvironment;
+import io.appwish.graphqlapi.eventbus.Address;
+import io.appwish.grpc.*;
 import io.vertx.core.eventbus.DeliveryOptions;
+import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
+
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 
-import graphql.schema.DataFetchingEnvironment;
-import io.appwish.graphqlapi.eventbus.Address;
-import io.appwish.grpc.AllWishQueryProto;
-import io.appwish.grpc.AllWishReplyProto;
-import io.appwish.grpc.UpdateWishInputProto;
-import io.appwish.grpc.WishDeleteReplyProto;
-import io.appwish.grpc.WishInputProto;
-import io.appwish.grpc.WishQueryProto;
-import io.appwish.grpc.WishReplyProto;
-import io.vertx.core.eventbus.EventBus;
+import static java.util.Objects.isNull;
 
 /**
  * Sends events on the event bus to resolve needs of wish-related part of GraphQL schema.
@@ -43,15 +39,16 @@ public class WishFetcher {
     final CompletableFuture<List<WishProtoWrapper>> completableFuture = new CompletableFuture<>();
     final AllWishQueryProto query = AllWishQueryProto.newBuilder().build();
     final String userId = getUserIdFrom(dataFetchingEnvironment);
+    final DeliveryOptions options = isNull(userId) ? new DeliveryOptions() : new DeliveryOptions().addHeader(USER_ID, userId);
 
     eventBus.<AllWishReplyProto>request(
-      Address.ALL_WISH.get(), query, new DeliveryOptions().addHeader(USER_ID, userId), event -> {
-      if (event.succeeded()) {
-        completableFuture.complete(event.result().body().getWishesList().stream().map(WishProtoWrapper::new).collect(Collectors.toList()));
-      } else {
-        completableFuture.completeExceptionally(event.cause());
-      }
-    });
+      Address.ALL_WISH.get(), query, options, event -> {
+        if (event.succeeded()) {
+          completableFuture.complete(event.result().body().getWishesList().stream().map(WishProtoWrapper::new).collect(Collectors.toList()));
+        } else {
+          completableFuture.completeExceptionally(event.cause());
+        }
+      });
 
     return completableFuture;
   }
@@ -60,17 +57,18 @@ public class WishFetcher {
     final CompletableFuture<WishProtoWrapper> completableFuture = new CompletableFuture<>();
     final WishQueryProto query = WishQueryProto.newBuilder().setId(Long.valueOf(dataFetchingEnvironment.getArgument(ID))).build();
     final String userId = getUserIdFrom(dataFetchingEnvironment);
+    final DeliveryOptions options = isNull(userId) ? new DeliveryOptions() : new DeliveryOptions().addHeader(USER_ID, userId);
 
     eventBus.<WishReplyProto>request(
-      Address.WISH.get(), query, new DeliveryOptions().addHeader(USER_ID, userId), event -> {
-      if (event.succeeded() && event.result().body().hasWish()) {
-        completableFuture.complete(new WishProtoWrapper(event.result().body().getWish()));
-      } else if (event.succeeded()) {
-        completableFuture.complete(null);
-      } else {
-        completableFuture.completeExceptionally(event.cause());
-      }
-    });
+      Address.WISH.get(), query, options, event -> {
+        if (event.succeeded() && event.result().body().hasWish()) {
+          completableFuture.complete(new WishProtoWrapper(event.result().body().getWish()));
+        } else if (event.succeeded()) {
+          completableFuture.complete(null);
+        } else {
+          completableFuture.completeExceptionally(event.cause());
+        }
+      });
 
     return completableFuture;
   }
@@ -82,6 +80,7 @@ public class WishFetcher {
     final String markdown = input.get(MARKDOWN);
     final String coverImageUrl = input.get(COVER_IMAGE_URL);
     final String userId = getUserIdFrom(dataFetchingEnvironment);
+    final DeliveryOptions options = isNull(userId) ? new DeliveryOptions() : new DeliveryOptions().addHeader(USER_ID, userId);
     final WishInputProto wishInput = WishInputProto.newBuilder()
       .setTitle(title)
       .setMarkdown(markdown)
@@ -89,15 +88,15 @@ public class WishFetcher {
       .build();
 
     eventBus.<WishReplyProto>request(
-      Address.CREATE_WISH.get(), wishInput, new DeliveryOptions().addHeader(USER_ID, userId), event -> {
-      if (event.succeeded() && event.result().body().hasWish()) {
-        completableFuture.complete(new WishProtoWrapper(event.result().body().getWish()));
-      } else if (event.succeeded()) {
-        completableFuture.completeExceptionally(new AssertionError("It should always create and return a wish"));
-      } else {
-        completableFuture.completeExceptionally(event.cause());
-      }
-    });
+      Address.CREATE_WISH.get(), wishInput, options, event -> {
+        if (event.succeeded() && event.result().body().hasWish()) {
+          completableFuture.complete(new WishProtoWrapper(event.result().body().getWish()));
+        } else if (event.succeeded()) {
+          completableFuture.completeExceptionally(new AssertionError("It should always create and return a wish"));
+        } else {
+          completableFuture.completeExceptionally(event.cause());
+        }
+      });
 
     return completableFuture;
   }
@@ -110,6 +109,7 @@ public class WishFetcher {
     final String markdown = input.get(MARKDOWN);
     final String coverImageUrl = input.get(COVER_IMAGE_URL);
     final String userId = getUserIdFrom(dataFetchingEnvironment);
+    final DeliveryOptions options = isNull(userId) ? new DeliveryOptions() : new DeliveryOptions().addHeader(USER_ID, userId);
     final UpdateWishInputProto wishInput = UpdateWishInputProto.newBuilder()
       .setTitle(title)
       .setMarkdown(markdown)
@@ -118,7 +118,7 @@ public class WishFetcher {
       .build();
 
     eventBus.<WishReplyProto>request(
-      Address.UPDATE_WISH.get(), wishInput, new DeliveryOptions().addHeader(USER_ID, userId), event -> {
+      Address.UPDATE_WISH.get(), wishInput, options, event -> {
         if (event.succeeded() && event.result().body().hasWish()) {
           completableFuture.complete(new WishProtoWrapper(event.result().body().getWish()));
         } else if (event.succeeded()) {
@@ -134,9 +134,10 @@ public class WishFetcher {
   public CompletionStage<Boolean> deleteWish(final DataFetchingEnvironment dataFetchingEnvironment) { final CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
     final WishQueryProto query = WishQueryProto.newBuilder().setId(Long.valueOf(dataFetchingEnvironment.getArgument(ID))).build();
     final String userId = getUserIdFrom(dataFetchingEnvironment);
+    final DeliveryOptions options = isNull(userId) ? new DeliveryOptions() : new DeliveryOptions().addHeader(USER_ID, userId);
 
     eventBus.<WishDeleteReplyProto>request(
-      Address.DELETE_WISH.get(), query, new DeliveryOptions().addHeader(USER_ID, userId), event -> {
+      Address.DELETE_WISH.get(), query, options, event -> {
         if (event.succeeded()) {
           completableFuture.complete(event.result().body().getDeleted());
         } else {
@@ -148,8 +149,12 @@ public class WishFetcher {
   }
 
   private String getUserIdFrom(final DataFetchingEnvironment environment) {
-    final RoutingContext context = environment.getLocalContext();
-    final JsonObject user = context.get(USER);
-    return user.getString(USER_ID);
+    try {
+      final RoutingContext context = environment.getLocalContext();
+      final JsonObject user = context.get(USER);
+      return user.getString(USER_ID);
+    } catch (final NullPointerException e) {
+      return null;
+    }
   }
 }
