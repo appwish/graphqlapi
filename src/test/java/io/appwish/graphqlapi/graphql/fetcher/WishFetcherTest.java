@@ -18,6 +18,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletionStage;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
@@ -66,7 +67,7 @@ class WishFetcherTest {
     // then
     action.whenComplete((wishProtos, throwable) -> {
       context.verify(() -> {
-        assertEquals(expected.getWishesList(), wishProtos);
+        assertEquals(expected.getWishesList().stream().map(Wish::new).collect(Collectors.toList()), wishProtos);
         context.completeNow();
       });
     });
@@ -118,7 +119,7 @@ class WishFetcherTest {
     // then
     action.whenComplete((wishProto, throwable) -> {
       context.verify(() -> {
-        assertEquals(expected.getWish(), wishProto);
+        assertEquals(new Wish(expected.getWish()), wishProto);
         context.completeNow();
       });
     });
@@ -202,7 +203,7 @@ class WishFetcherTest {
     // then
     action.whenComplete((wishProto, throwable) -> {
       context.verify(() -> {
-        assertEquals(TestData.WISH_1, wishProto);
+        assertEquals(new Wish(TestData.WISH_1), wishProto);
         context.completeNow();
       });
     });
@@ -264,7 +265,7 @@ class WishFetcherTest {
     // then
     action.whenComplete((wishProto, throwable) -> {
       context.verify(() -> {
-        assertEquals(TestData.WISH_1, wishProto);
+        assertEquals(new Wish(TestData.WISH_1), wishProto);
         context.completeNow();
       });
     });
