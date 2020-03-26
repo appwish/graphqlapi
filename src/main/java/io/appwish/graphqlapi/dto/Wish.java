@@ -1,13 +1,13 @@
-package io.appwish.graphqlapi.graphql.fetcher;
+package io.appwish.graphqlapi.dto;
 
 import io.appwish.grpc.WishProto;
+
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 
-// TODO create separate package for data objects
-public class WishProtoWrapper {
+public class Wish {
 
   private final long id;
   private final String title;
@@ -17,7 +17,7 @@ public class WishProtoWrapper {
   private OffsetDateTime createdAt;
   private OffsetDateTime updatedAt;
 
-  public WishProtoWrapper(final WishProto proto) {
+  public Wish(final WishProto proto) {
     final LocalDateTime updatedAt = LocalDateTime.from(LocalDateTime.ofInstant(Instant.ofEpochSecond(proto.getUpdatedAt().getSeconds()), ZoneOffset.UTC));
     final LocalDateTime createdAt = LocalDateTime.from(LocalDateTime.ofInstant(Instant.ofEpochSecond(proto.getCreatedAt().getSeconds()), ZoneOffset.UTC));
     this.createdAt = OffsetDateTime.of(createdAt, ZoneOffset.UTC);

@@ -1,34 +1,27 @@
 package io.appwish.graphqlapi.graphql.fetcher;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import graphql.schema.DataFetchingEnvironment;
+import io.appwish.graphqlapi.dto.Wish;
 import io.appwish.graphqlapi.eventbus.Address;
 import io.appwish.graphqlapi.eventbus.EventBusConfigurer;
 import io.appwish.graphqlapi.testutil.TestData;
-import io.appwish.grpc.AllWishQueryProto;
-import io.appwish.grpc.AllWishReplyProto;
-import io.appwish.grpc.UpdateWishInputProto;
-import io.appwish.grpc.WishDeleteReplyProto;
-import io.appwish.grpc.WishInputProto;
-import io.appwish.grpc.WishProto;
-import io.appwish.grpc.WishQueryProto;
-import io.appwish.grpc.WishReplyProto;
+import io.appwish.grpc.*;
 import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.eventbus.ReplyException;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CompletionStage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletionStage;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(VertxExtension.class)
 class WishFetcherTest {
@@ -68,7 +61,7 @@ class WishFetcherTest {
     });
 
     // when
-    final CompletionStage<List<WishProtoWrapper>> action = fetcher.allWish(mock(DataFetchingEnvironment.class));
+    final CompletionStage<List<Wish>> action = fetcher.allWish(mock(DataFetchingEnvironment.class));
 
     // then
     action.whenComplete((wishProtos, throwable) -> {
@@ -92,7 +85,7 @@ class WishFetcherTest {
     });
 
     // when
-    final CompletionStage<List<WishProtoWrapper>> action = fetcher.allWish(mock(DataFetchingEnvironment.class));
+    final CompletionStage<List<Wish>> action = fetcher.allWish(mock(DataFetchingEnvironment.class));
 
     // then
     action.whenComplete((wishProtos, throwable) -> {
@@ -120,7 +113,7 @@ class WishFetcherTest {
     });
 
     // when
-    final CompletionStage<WishProtoWrapper> action = fetcher.wish(mock);
+    final CompletionStage<Wish> action = fetcher.wish(mock);
 
     // then
     action.whenComplete((wishProto, throwable) -> {
@@ -148,7 +141,7 @@ class WishFetcherTest {
     });
 
     // when
-    final CompletionStage<WishProtoWrapper> action = fetcher.wish(mock);
+    final CompletionStage<Wish> action = fetcher.wish(mock);
 
     // then
     action.whenComplete((wishProto, throwable) -> {
@@ -174,7 +167,7 @@ class WishFetcherTest {
     });
 
     // when
-    final CompletionStage<WishProtoWrapper> action = fetcher.wish(mock);
+    final CompletionStage<Wish> action = fetcher.wish(mock);
 
     // then
     action.whenComplete((wishProto, throwable) -> {
@@ -204,7 +197,7 @@ class WishFetcherTest {
     });
 
     // when
-    final CompletionStage<WishProtoWrapper> action = fetcher.createWish(dataFetchingEnvironment);
+    final CompletionStage<Wish> action = fetcher.createWish(dataFetchingEnvironment);
 
     // then
     action.whenComplete((wishProto, throwable) -> {
@@ -234,7 +227,7 @@ class WishFetcherTest {
     });
 
     // when
-    final CompletionStage<WishProtoWrapper> action = fetcher.createWish(dataFetchingEnvironment);
+    final CompletionStage<Wish> action = fetcher.createWish(dataFetchingEnvironment);
 
     // then
     action.whenComplete((wishProto, throwable) -> {
@@ -266,7 +259,7 @@ class WishFetcherTest {
     });
 
     // when
-    final CompletionStage<WishProtoWrapper> action = fetcher.updateWish(dataFetchingEnvironment);
+    final CompletionStage<Wish> action = fetcher.updateWish(dataFetchingEnvironment);
 
     // then
     action.whenComplete((wishProto, throwable) -> {
@@ -298,7 +291,7 @@ class WishFetcherTest {
     });
 
     // when
-    final CompletionStage<WishProtoWrapper> action = fetcher.updateWish(dataFetchingEnvironment);
+    final CompletionStage<Wish> action = fetcher.updateWish(dataFetchingEnvironment);
 
     // then
     action.whenComplete((wishProto, throwable) -> {

@@ -1,7 +1,7 @@
-package io.appwish.graphqlapi.graphql.fetcher;
+package io.appwish.graphqlapi.dto;
 
-// TODO create separate package for data objects
 public class Author {
+
   private final String id;
 
   public Author(final String authorId) {
