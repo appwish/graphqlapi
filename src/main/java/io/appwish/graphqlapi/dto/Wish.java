@@ -6,6 +6,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.Objects;
 
 public class Wish {
 
@@ -55,5 +56,24 @@ public class Wish {
 
   public OffsetDateTime getUpdatedAt() {
     return updatedAt;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Wish wish = (Wish) o;
+    return id == wish.id &&
+      title.equals(wish.title) &&
+      markdown.equals(wish.markdown) &&
+      Objects.equals(coverImageUrl, wish.coverImageUrl) &&
+      author.equals(wish.author) &&
+      createdAt.equals(wish.createdAt) &&
+      updatedAt.equals(wish.updatedAt);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, title, markdown, coverImageUrl, author, createdAt, updatedAt);
   }
 }
