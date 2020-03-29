@@ -5,6 +5,10 @@ type Query {
   "Gets all Wishes"
   allWish: [Wish!]!
 
+  hasVoted(selector: VoteSelector!): Boolean!
+
+  voteScore(selector: VoteSelector!): Score!
+
   #"Get all Comments for a target(a Wish or a Comment)"
   #comments(targetID: ID!): [Comment!]!
 

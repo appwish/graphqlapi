@@ -1,10 +1,13 @@
 package io.appwish.graphqlapi.eventbus;
 
+import io.appwish.graphqlapi.dto.input.VoteInput;
+import io.appwish.graphqlapi.dto.query.VoteSelector;
+import io.appwish.graphqlapi.dto.reply.UnvoteReply;
+import io.appwish.graphqlapi.dto.reply.VoteReply;
+import io.appwish.graphqlapi.dto.reply.VoteScoreReply;
 import io.appwish.grpc.AllWishQueryProto;
 import io.appwish.grpc.AllWishReplyProto;
 import io.appwish.grpc.UpdateWishInputProto;
-import io.appwish.grpc.VoteInputProto;
-import io.appwish.grpc.VoteReplyProto;
 import io.appwish.grpc.WishDeleteReplyProto;
 import io.appwish.grpc.WishInputProto;
 import io.appwish.grpc.WishProto;
@@ -15,11 +18,10 @@ import io.vertx.core.eventbus.MessageCodec;
 
 /**
  * These codecs can be used to enable passing custom Java objects on the local event bus.
- *
+ * <p>
  * To enable T type to be passed via the event bus, just create a new {@link LocalReferenceCodec}.
- *
- * It's not enough to add the codec here - you need to register them on the event bus using {@link
- * EventBus#registerCodec(MessageCodec)}.
+ * <p>
+ * It's not enough to add the codec here - you need to register them on the event bus using {@link EventBus#registerCodec(MessageCodec)}.
  */
 public enum Codec {
   UPDATE_WISH_INPUT(new LocalReferenceCodec<>(UpdateWishInputProto.class)),
@@ -30,8 +32,11 @@ public enum Codec {
   ALL_WISH_QUERY(new LocalReferenceCodec<>(AllWishQueryProto.class)),
   WISH_QUERY(new LocalReferenceCodec<>(WishQueryProto.class)),
   WISH_INPUT(new LocalReferenceCodec<>(WishInputProto.class)),
-  VOTE_INPUT(new LocalReferenceCodec<>(VoteInputProto.class)),
-  VOTE_REPLY(new LocalReferenceCodec<>(VoteReplyProto.class));
+  VOTE_INPUT(new LocalReferenceCodec<>(VoteInput.class)),
+  VOTE_SELECTOR(new LocalReferenceCodec<>(VoteSelector.class)),
+  VOTE_REPLY(new LocalReferenceCodec<>(VoteReply.class)),
+  UNVOTE_REPLY(new LocalReferenceCodec<>(UnvoteReply.class)),
+  VOTE_SCORE_REPLY(new LocalReferenceCodec<>(VoteScoreReply.class));
 
   private final LocalReferenceCodec codec;
 

@@ -10,6 +10,7 @@ version = '1.0.0-SNAPSHOT'
 
 repositories {
   mavenCentral()
+  maven { url 'https://jitpack.io' }
 }
 
 ext {
@@ -35,6 +36,7 @@ dependencies {
   implementation 'com.graphql-java:graphql-java-extended-scalars:1.0'
   implementation 'com.google.oauth-client:google-oauth-client:1.30.6'
   implementation 'com.google.api-client:google-api-client-gson:1.30.6'
+  implementation 'com.github.BAData:protobuf-converter:1.1.5'
 
   testImplementation "io.vertx:vertx-web-client:$vertxVersion"
   testImplementation "io.vertx:vertx-junit5:$vertxVersion"

@@ -7,29 +7,43 @@ option java_package = "io.appwish.grpc";
 option java_outer_classname = "VoteGRPC";
 
 service VoteService {
-  rpc GetAllVote (AllVoteQueryProto) returns (AllVoteReplyProto) {}
-  rpc GetVote (VoteQueryProto) returns (VoteReplyProto) {}
-  rpc CreateVote (VoteInputProto) returns (VoteReplyProto) {}
-  rpc UpdateVote (UpdateVoteInputProto) returns (VoteReplyProto) {}
-  rpc DeleteVote (VoteQueryProto) returns (VoteDeleteReplyProto) {}
+  rpc Vote (VoteInputProto) returns (VoteReplyProto) {
+  }
+  rpc Unvote (VoteSelectorProto) returns (UnvoteReplyProto) {
+  }
+  rpc HasVoted (VoteSelectorProto) returns (HasVotedReplyProto) {
+  }
+  rpc VoteScore (VoteSelectorProto) returns (VoteScoreReplyProto) {
+  }
 }
 
-message AllVoteQueryProto {}
-
-message VoteQueryProto {
-  int64 id = 1;
+message VoteInputProto {
+  int64 item_id = 2;
+  ItemTypeProto item_type = 3;
+  VoteTypeProto vote_type = 4;
 }
 
-message AllVoteReplyProto {
-  repeated VoteProto votes = 1;
+message VoteSelectorProto {
+  int64 item_id = 1;
+  ItemTypeProto item_type = 2;
 }
-
 message VoteReplyProto {
   VoteProto vote = 1;
 }
 
-message VoteDeleteReplyProto {
+message UnvoteReplyProto {
   bool deleted = 1;
+}
+
+message HasVotedReplyProto {
+  bool voted = 1;
+  VoteProto vote = 2;
+}
+
+message VoteScoreReplyProto {
+  int64 score = 1;
+  int64 up = 2;
+  int64 down = 3;
 }
 
 enum ItemTypeProto {
@@ -44,23 +58,9 @@ enum VoteTypeProto {
 
 message VoteProto {
   int64 id = 1;
-  int64 userId = 2;
-  int64 itemId = 3;
-  ItemTypeProto itemType = 4;
-  google.protobuf.Timestamp created_at = 5;
-  VoteTypeProto voteType = 6;
-}
-
-message VoteInputProto {
-  int64 userId = 1;
-  int64 itemId = 2;
-  ItemTypeProto itemType = 3;
-  VoteTypeProto voteType = 4;
-}
-
-message UpdateVoteInputProto {
-  int64 userId = 1;
-  int64 itemId = 2;
-  ItemTypeProto itemType = 3;
-  VoteTypeProto voteType = 4;
+  string user_id = 2;
+  int64 item_id = 3;
+  ItemTypeProto item_type = 4;
+  VoteTypeProto vote_type = 5;
+  google.protobuf.Timestamp created_at = 6;
 }

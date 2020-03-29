@@ -3,7 +3,7 @@ scalar DateTime
 
 type Wish {
   id: ID!
-  author: User!
+  user: User!
   title: String!
   markdown: String!
   #tags: [String!]!
@@ -29,10 +29,18 @@ type User {
   #feedTags: [String!]!
 }
 
+type Score{
+  score: Int!
+  up: Int!
+  down: Int!
+}
+
 type Vote{
   id: ID!
   itemId: ID!
   itemType: ItemType!
+  voteType: VoteType!
+  voter: User!
 }
 
 type Comment{

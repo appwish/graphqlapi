@@ -11,6 +11,11 @@ input VoteInput{
   voteType: VoteType!
 }
 
+input VoteSelector {
+  itemId: ID!
+  itemType: ItemType!
+}
+
 enum ItemType{
   WISH, COMMENT
 }

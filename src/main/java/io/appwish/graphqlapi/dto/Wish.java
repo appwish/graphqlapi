@@ -1,29 +1,42 @@
 package io.appwish.graphqlapi.dto;
 
 import io.appwish.grpc.WishProto;
-
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Objects;
+import net.badata.protobuf.converter.annotation.ProtoClass;
+import net.badata.protobuf.converter.annotation.ProtoField;
 
+// TODO add support to use with converter
+
+/**
+ * Represents single user's wish.
+ * <p>
+ * {@link ProtoClass} and {@link ProtoField} annotations are used by {@link net.badata.protobuf.converter.Converter} to convert back/forth between
+ * protobuf data transfer objects and model objects.
+ * <p>
+ * The converter requires a POJO with getters, setters and a default constructor.
+ */
 public class Wish {
 
   private final long id;
   private final String title;
   private final String markdown;
   private final String coverImageUrl;
-  private final Author author;
-  private OffsetDateTime createdAt;
-  private OffsetDateTime updatedAt;
+  private final User user;
+  private final OffsetDateTime createdAt;
+  private final OffsetDateTime updatedAt;
 
   public Wish(final WishProto proto) {
-    final LocalDateTime updatedAt = LocalDateTime.from(LocalDateTime.ofInstant(Instant.ofEpochSecond(proto.getUpdatedAt().getSeconds()), ZoneOffset.UTC));
-    final LocalDateTime createdAt = LocalDateTime.from(LocalDateTime.ofInstant(Instant.ofEpochSecond(proto.getCreatedAt().getSeconds()), ZoneOffset.UTC));
+    final LocalDateTime updatedAt = LocalDateTime
+      .from(LocalDateTime.ofInstant(Instant.ofEpochSecond(proto.getUpdatedAt().getSeconds()), ZoneOffset.UTC));
+    final LocalDateTime createdAt = LocalDateTime
+      .from(LocalDateTime.ofInstant(Instant.ofEpochSecond(proto.getCreatedAt().getSeconds()), ZoneOffset.UTC));
     this.createdAt = OffsetDateTime.of(createdAt, ZoneOffset.UTC);
     this.updatedAt = OffsetDateTime.of(updatedAt, ZoneOffset.UTC);
-    this.author = new Author(proto.getAuthorId());
+    this.user = new User(proto.getAuthorId());
     this.id = proto.getId();
     this.title = proto.getTitle();
     this.markdown = proto.getMarkdown();
@@ -34,8 +47,8 @@ public class Wish {
     return title;
   }
 
-  public Author getAuthor() {
-    return author;
+  public User getUser() {
+    return user;
   }
 
   public String getMarkdown() {
@@ -60,20 +73,37 @@ public class Wish {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
     Wish wish = (Wish) o;
     return id == wish.id &&
       title.equals(wish.title) &&
       markdown.equals(wish.markdown) &&
       Objects.equals(coverImageUrl, wish.coverImageUrl) &&
-      author.equals(wish.author) &&
+      user.equals(wish.user) &&
       createdAt.equals(wish.createdAt) &&
       updatedAt.equals(wish.updatedAt);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, title, markdown, coverImageUrl, author, createdAt, updatedAt);
+    return Objects.hash(id, title, markdown, coverImageUrl, user, createdAt, updatedAt);
+  }
+
+  @Override
+  public String toString() {
+    return "Wish{" +
+      "id=" + id +
+      ", title='" + title + '\'' +
+      ", markdown='" + markdown + '\'' +
+      ", coverImageUrl='" + coverImageUrl + '\'' +
+      ", user=" + user +
+      ", createdAt=" + createdAt +
+      ", updatedAt=" + updatedAt +
+      '}';
   }
 }
