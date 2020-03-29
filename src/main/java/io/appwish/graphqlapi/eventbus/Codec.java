@@ -2,6 +2,7 @@ package io.appwish.graphqlapi.eventbus;
 
 import io.appwish.graphqlapi.dto.input.VoteInput;
 import io.appwish.graphqlapi.dto.query.VoteSelector;
+import io.appwish.graphqlapi.dto.reply.HasVotedReply;
 import io.appwish.graphqlapi.dto.reply.UnvoteReply;
 import io.appwish.graphqlapi.dto.reply.VoteReply;
 import io.appwish.graphqlapi.dto.reply.VoteScoreReply;
@@ -36,6 +37,7 @@ public enum Codec {
   VOTE_SELECTOR(new LocalReferenceCodec<>(VoteSelector.class)),
   VOTE_REPLY(new LocalReferenceCodec<>(VoteReply.class)),
   UNVOTE_REPLY(new LocalReferenceCodec<>(UnvoteReply.class)),
+  HAS_VOTED_REPLY(new LocalReferenceCodec<>(HasVotedReply.class)),
   VOTE_SCORE_REPLY(new LocalReferenceCodec<>(VoteScoreReply.class));
 
   private final LocalReferenceCodec codec;

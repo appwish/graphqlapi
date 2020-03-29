@@ -1,6 +1,7 @@
 package io.appwish.graphqlapi.dto.reply;
 
 import io.appwish.graphqlapi.dto.Vote;
+import io.appwish.grpc.HasVotedReplyProto;
 import java.util.Objects;
 import net.badata.protobuf.converter.annotation.ProtoClass;
 import net.badata.protobuf.converter.annotation.ProtoField;
@@ -13,6 +14,7 @@ import net.badata.protobuf.converter.annotation.ProtoField;
  * <p>
  * The converter requires a POJO with getters, setters and a default constructor.
  */
+@ProtoClass(HasVotedReplyProto.class)
 public class HasVotedReply {
 
   @ProtoField
