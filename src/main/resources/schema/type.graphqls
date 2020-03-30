@@ -36,10 +36,14 @@ type Score{
 }
 
 type Vote{
-  id: ID!
   itemId: ID!
   itemType: ItemType!
   voteType: VoteType!
+  userId: ID!
+}
+
+type VoteReply{
+  vote: Vote!
   voter: User!
 }
 

@@ -3,9 +3,10 @@ package io.appwish.graphqlapi.graphql.fetcher;
 import static java.util.Objects.isNull;
 
 import graphql.schema.DataFetchingEnvironment;
-import io.appwish.graphqlapi.dto.Vote;
+import io.appwish.graphqlapi.dto.User;
 import io.appwish.graphqlapi.dto.input.VoteInput;
 import io.appwish.graphqlapi.dto.query.VoteSelector;
+import io.appwish.graphqlapi.dto.reply.HasVotedReply;
 import io.appwish.graphqlapi.dto.reply.UnvoteReply;
 import io.appwish.graphqlapi.dto.reply.VoteReply;
 import io.appwish.graphqlapi.dto.reply.VoteScoreReply;
@@ -31,7 +32,7 @@ public class VoteFetcher {
   private static final String VOTE_TYPE = "voteType";
   private static final String USER_ID = "userId";
   private static final String USER = "user";
-  public static final String QUERY = "query";
+  public static final String SELECTOR = "selector";
 
   private final EventBus eventBus;
 
@@ -39,8 +40,8 @@ public class VoteFetcher {
     this.eventBus = eventBus;
   }
 
-  public CompletionStage<Vote> vote(final DataFetchingEnvironment dataFetchingEnvironment) {
-    final CompletableFuture<Vote> completableFuture = new CompletableFuture<>();
+  public CompletionStage<VoteReply> vote(final DataFetchingEnvironment dataFetchingEnvironment) {
+    final CompletableFuture<VoteReply> completableFuture = new CompletableFuture<>();
     final Map<String, String> input = dataFetchingEnvironment.getArgument(INPUT);
     final String itemId = input.get(ITEM_ID);
     final String itemType = input.get(ITEM_TYPE);
@@ -51,7 +52,8 @@ public class VoteFetcher {
 
     eventBus.<VoteReply>request(Address.VOTE.get(), voteInput, options, event -> {
       if (event.succeeded() && !isNull(event.result().body())) {
-        completableFuture.complete(event.result().body().getVote());
+        event.result().body().setVoter(new User(event.result().body().getVote().getUserId()));
+        completableFuture.complete(event.result().body());
       } else if (event.succeeded()) {
         completableFuture.completeExceptionally(new AssertionError("Should never happen"));
       } else {
@@ -64,8 +66,9 @@ public class VoteFetcher {
 
   public CompletionStage<Boolean> unvote(final DataFetchingEnvironment dataFetchingEnvironment) {
     final CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
-    final long itemId = Long.parseLong(dataFetchingEnvironment.getArgument(ITEM_ID));
-    final ItemType itemType = ItemType.valueOf(dataFetchingEnvironment.getArgument(ITEM_TYPE).toString());
+    final Map<String, String> query = dataFetchingEnvironment.getArgument(SELECTOR);
+    final long itemId = Long.parseLong(query.get(ITEM_ID));
+    final ItemType itemType = ItemType.valueOf(query.get(ITEM_TYPE));
     final String userId = getUserIdFrom(dataFetchingEnvironment);
     final DeliveryOptions options = isNull(userId) ? new DeliveryOptions() : new DeliveryOptions().addHeader(USER_ID, userId);
     final VoteSelector selector = new VoteSelector(itemId, itemType);
@@ -85,15 +88,15 @@ public class VoteFetcher {
 
   public CompletionStage<Boolean> hasVoted(final DataFetchingEnvironment dataFetchingEnvironment) {
     final CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
-    final Map<String, String> query = dataFetchingEnvironment.getArgument(QUERY);
+    final Map<String, String> query = dataFetchingEnvironment.getArgument(SELECTOR);
     final long itemId = Long.parseLong(query.get(ITEM_ID));
     final ItemType itemType = ItemType.valueOf(query.get(ITEM_TYPE));
     final String userId = getUserIdFrom(dataFetchingEnvironment);
     final DeliveryOptions options = isNull(userId) ? new DeliveryOptions() : new DeliveryOptions().addHeader(USER_ID, userId);
     final VoteSelector selector = new VoteSelector(itemId, itemType);
 
-    eventBus.<Boolean>request(Address.HAS_VOTED.get(), selector, options, event -> {
-      if (event.succeeded() && event.result().body()) {
+    eventBus.<HasVotedReply>request(Address.HAS_VOTED.get(), selector, options, event -> {
+      if (event.succeeded() && event.result().body().isVoted()) {
         completableFuture.complete(true);
       } else if (event.succeeded()) {
         completableFuture.complete(false);
@@ -107,8 +110,9 @@ public class VoteFetcher {
 
   public CompletionStage<VoteScoreReply> voteScore(final DataFetchingEnvironment dataFetchingEnvironment) {
     final CompletableFuture<VoteScoreReply> completableFuture = new CompletableFuture<>();
-    final long itemId = Long.parseLong(dataFetchingEnvironment.getArgument(ITEM_ID));
-    final ItemType itemType = ItemType.valueOf(dataFetchingEnvironment.getArgument(ITEM_TYPE).toString());
+    final Map<String, String> query = dataFetchingEnvironment.getArgument(SELECTOR);
+    final long itemId = Long.parseLong(query.get(ITEM_ID));
+    final ItemType itemType = ItemType.valueOf(query.get(ITEM_TYPE));
     final VoteSelector selector = new VoteSelector(itemId, itemType);
 
     eventBus.<VoteScoreReply>request(Address.VOTE_SCORE.get(), selector, event -> {

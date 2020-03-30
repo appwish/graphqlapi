@@ -17,7 +17,7 @@ type Mutation {
   #"Delete a Comment... The userID will be retrieved from the auth token"
   #deleteComment(commentID: ID): Boolean
 
-  vote(input: VoteInput!): Vote
+  vote(input: VoteInput!): VoteReply!
 
   unvote(selector: VoteSelector!): Boolean!
 }

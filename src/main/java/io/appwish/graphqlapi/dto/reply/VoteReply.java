@@ -1,5 +1,6 @@
 package io.appwish.graphqlapi.dto.reply;
 
+import io.appwish.graphqlapi.dto.User;
 import io.appwish.graphqlapi.dto.Vote;
 import io.appwish.grpc.VoteReplyProto;
 import java.util.Objects;
@@ -20,6 +21,8 @@ public class VoteReply {
   @ProtoField
   private Vote vote;
 
+  private User voter;
+
   public VoteReply(final Vote vote) {
     this.vote = vote;
   }
@@ -33,6 +36,14 @@ public class VoteReply {
 
   public void setVote(final Vote vote) {
     this.vote = vote;
+  }
+
+  public User getVoter() {
+    return voter;
+  }
+
+  public void setVoter(User voter) {
+    this.voter = voter;
   }
 
   @Override
