@@ -11,6 +11,12 @@ input VoteInput{
   voteType: VoteType!
 }
 
+input CommentInput{
+  itemId: ID!
+  itemType: ItemType!
+  content: String!
+}
+
 input VoteSelector {
   itemId: ID!
   itemType: ItemType!

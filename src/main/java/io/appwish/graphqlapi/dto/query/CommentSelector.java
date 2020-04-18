@@ -2,7 +2,7 @@ package io.appwish.graphqlapi.dto.query;
 
 import io.appwish.graphqlapi.dto.converter.ItemTypeConverter;
 import io.appwish.graphqlapi.dto.type.ItemType;
-import io.appwish.grpc.VoteSelectorProto;
+import io.appwish.grpc.CommentSelectorProto;
 import java.util.Objects;
 import net.badata.protobuf.converter.annotation.ProtoClass;
 import net.badata.protobuf.converter.annotation.ProtoField;
@@ -15,28 +15,28 @@ import net.badata.protobuf.converter.annotation.ProtoField;
  * <p>
  * The converter requires a POJO with getters, setters and a default constructor.
  */
-@ProtoClass(VoteSelectorProto.class)
-public class VoteSelector {
+@ProtoClass(CommentSelectorProto.class)
+public class CommentSelector {
 
   @ProtoField
-  private long itemId;
+  private String itemId;
 
   @ProtoField(converter = ItemTypeConverter.class)
   private ItemType itemType;
 
-  public VoteSelector(final long itemId, final ItemType itemType) {
+  public CommentSelector(final String itemId, final ItemType itemType) {
     this.itemId = itemId;
     this.itemType = itemType;
   }
 
-  public VoteSelector() {
+  public CommentSelector() {
   }
 
-  public long getItemId() {
+  public String getItemId() {
     return itemId;
   }
 
-  public void setItemId(long itemId) {
+  public void setItemId(String itemId) {
     this.itemId = itemId;
   }
 
@@ -56,9 +56,9 @@ public class VoteSelector {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    VoteSelector voteSelector = (VoteSelector) o;
-    return itemId == voteSelector.itemId &&
-      itemType.equals(voteSelector.itemType);
+    CommentSelector commentSelector = (CommentSelector) o;
+    return itemId == commentSelector.itemId &&
+      itemType.equals(commentSelector.itemType);
   }
 
   @Override
@@ -68,7 +68,7 @@ public class VoteSelector {
 
   @Override
   public String toString() {
-    return "VoteSelector{" +
+    return "CommentSelector{" +
       "itemId=" + itemId +
       ", itemType='" + itemType + '\'' +
       '}';

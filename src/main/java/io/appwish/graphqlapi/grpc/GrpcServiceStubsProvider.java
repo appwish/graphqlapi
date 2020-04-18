@@ -1,5 +1,7 @@
 package io.appwish.graphqlapi.grpc;
 
+import io.appwish.grpc.CommentServiceGrpc;
+import io.appwish.grpc.CommentServiceGrpc.CommentServiceVertxStub;
 import io.appwish.grpc.VoteServiceGrpc;
 import io.appwish.grpc.VoteServiceGrpc.VoteServiceVertxStub;
 import io.appwish.grpc.WishServiceGrpc;
@@ -59,5 +61,22 @@ public class GrpcServiceStubsProvider {
       .build();
 
     return VoteServiceGrpc.newVertxStub(channel);
+  }
+
+  /**
+   * Comment service stub can be used to fetch data from comment service
+   */
+  public CommentServiceVertxStub commentServiceStub() {
+    final String commentServiceHost = config.getString("commentServiceHost");
+    final Integer commentServicePort = config.getInteger("commentServicePort");
+
+    LOG.info("Creating commentservice gRPC stub for address: " + commentServiceHost + ":" + commentServicePort);
+
+    final ManagedChannel channel = VertxChannelBuilder
+      .forAddress(vertx, commentServiceHost, commentServicePort)
+      .usePlaintext()
+      .build();
+
+    return CommentServiceGrpc.newVertxStub(channel);
   }
 }

@@ -1,5 +1,6 @@
 package io.appwish.graphqlapi.verticle;
 
+import io.appwish.graphqlapi.grpc.CommentGrpcClientService;
 import io.appwish.graphqlapi.grpc.GrpcServiceStubsProvider;
 import io.appwish.graphqlapi.grpc.VoteGrpcClientService;
 import io.appwish.graphqlapi.grpc.WishGrpcClientService;
@@ -21,8 +22,10 @@ public class GrpcClientVerticle extends AbstractVerticle {
   public void start(final Promise<Void> startPromise) throws Exception {
     final WishGrpcClientService wishServiceStub = new WishGrpcClientService(vertx.eventBus(), grpcServiceStubsProvider.wishServiceStub());
     final VoteGrpcClientService voteServiceStub = new VoteGrpcClientService(vertx.eventBus(), grpcServiceStubsProvider.voteServiceStub());
+    final CommentGrpcClientService commentServiceStub = new CommentGrpcClientService(vertx.eventBus(), grpcServiceStubsProvider.commentServiceStub());
     wishServiceStub.register();
     voteServiceStub.register();
+    commentServiceStub.register();
     startPromise.complete();
   }
 }

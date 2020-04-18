@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "voteservice.proto";
+
+option java_multiple_files = true;
+option java_package = "io.appwish.grpc";
+option java_outer_classname = "CommentGRPC";
+
+service CommentService {
+  rpc GetAllComment (CommentSelectorProto) returns (AllCommentReplyProto) {}
+  rpc CreateComment (CommentInputProto) returns (CommentReplyProto) {}
+  rpc UpdateComment (UpdateCommentInputProto) returns (CommentReplyProto) {}
+  rpc DeleteComment (CommentQueryProto) returns (CommentDeleteReplyProto) {}
+}
+
+message CommentQueryProto {
+  int64 id = 1;
+}
+
+message AllCommentReplyProto {
+  repeated CommentProto comments = 1;
+}
+
+message CommentReplyProto {
+  CommentProto comment = 1;
+}
+
+message CommentDeleteReplyProto {
+  bool deleted = 1;
+}
+
+message CommentProto {
+  int64 id = 1;
+  string user_id = 2;
+  string item_id = 3;
+  ItemTypeProto item_type = 4;
+  string content = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+}
+
+message CommentInputProto {
+  int64 item_id = 1;
+  ItemTypeProto item_type = 2;
+  string content = 3;
+}
+
+message UpdateCommentInputProto {
+  int64 id = 1;
+  string content = 2;
+}
+
+message CommentSelectorProto {
+  string item_id = 1;
+  ItemTypeProto item_type = 2;
+}

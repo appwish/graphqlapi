@@ -12,7 +12,11 @@ public enum Address {
   VOTE,
   UNVOTE,
   HAS_VOTED,
-  VOTE_SCORE;
+  VOTE_SCORE,
+  COMMENT,
+  ALL_COMMENTS,
+  DELETE_COMMENT,
+  UPDATE_COMMENT;
 
   public String get() {
     return name();

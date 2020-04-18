@@ -1,7 +1,12 @@
 package io.appwish.graphqlapi.eventbus;
 
+import io.appwish.graphqlapi.dto.input.CommentInput;
+import io.appwish.graphqlapi.dto.input.UpdateCommentInput;
 import io.appwish.graphqlapi.dto.input.VoteInput;
+import io.appwish.graphqlapi.dto.query.CommentSelector;
 import io.appwish.graphqlapi.dto.query.VoteSelector;
+import io.appwish.graphqlapi.dto.reply.AllCommentReply;
+import io.appwish.graphqlapi.dto.reply.CommentReply;
 import io.appwish.graphqlapi.dto.reply.HasVotedReply;
 import io.appwish.graphqlapi.dto.reply.UnvoteReply;
 import io.appwish.graphqlapi.dto.reply.VoteReply;
@@ -38,7 +43,12 @@ public enum Codec {
   VOTE_REPLY(new LocalReferenceCodec<>(VoteReply.class)),
   UNVOTE_REPLY(new LocalReferenceCodec<>(UnvoteReply.class)),
   HAS_VOTED_REPLY(new LocalReferenceCodec<>(HasVotedReply.class)),
-  VOTE_SCORE_REPLY(new LocalReferenceCodec<>(VoteScoreReply.class));
+  VOTE_SCORE_REPLY(new LocalReferenceCodec<>(VoteScoreReply.class)),
+  COMMENT_INPUT(new LocalReferenceCodec<>(CommentInput.class)),
+  COMMENT_REPLY(new LocalReferenceCodec<>(CommentReply.class)),
+  ALL_COMMENT_REPLY(new LocalReferenceCodec<>(AllCommentReply.class)),
+  COMMENT_SELECTOR(new LocalReferenceCodec<>(CommentSelector.class)),
+  UPDATE_COMMENT_INPUT(new LocalReferenceCodec<>(UpdateCommentInput.class));
 
   private final LocalReferenceCodec codec;
 

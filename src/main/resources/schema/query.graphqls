@@ -9,8 +9,8 @@ type Query {
 
   voteScore(selector: VoteSelector!): Score!
 
-  #"Get all Comments for a target(a Wish or a Comment)"
-  #comments(targetID: ID!): [Comment!]!
+  "Get all Comments for a target(a Wish or a Comment)"
+  allComments(itemId: ID!, itemType: ItemType!): [Comment!]!
 
   #"Fets all the votes for a target(a Wish or a Comment)"
   #votes(targetID: ID!): [Vote!]!

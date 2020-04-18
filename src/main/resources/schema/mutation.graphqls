@@ -8,14 +8,11 @@ type Mutation {
   "Delete an AppWish by ID"
   deleteWish(id: ID!): Boolean
 
-  #"Create a new comment... The userID will be retrieved from the auth token"
-  #createComment(targetID:ID!, msg: String!): Comment
+  createComment(input: CommentInput!): CommentReply!
 
-  #"Update a Comment... The userID will be retrieved from the auth token"
-  #updateComment(commentID:ID!, msg: String!): Comment
+  updateComment(id: ID!, content: String!): CommentReply
 
-  #"Delete a Comment... The userID will be retrieved from the auth token"
-  #deleteComment(commentID: ID): Boolean
+  deleteComment(commentId: ID!): Boolean!
 
   vote(input: VoteInput!): VoteReply!
 

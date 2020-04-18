@@ -5,5 +5,7 @@
   "wishServicePort": 8081,
   "voteServiceHost": "localhost",
   "voteServicePort": 8082,
+  "commentServiceHost": "localhost",
+  "commentServicePort": 8083,
   "schemaDirPath": "schema"
 }
