@@ -22,4 +22,3 @@ To run your application:
 
 To [install Qovery CLI](https://docs.qovery.com/quickstart/sign-up).
 
-
